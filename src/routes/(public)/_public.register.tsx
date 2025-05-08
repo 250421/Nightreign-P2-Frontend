@@ -1,8 +1,3 @@
-import {
-  loginSchema,
-  type LoginFormValues,
-} from "@/features/auth/schemas/login-schema";
-
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Card,
@@ -25,35 +20,37 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useLogin } from "@/features/auth/hooks/use-login";
-export const Route = createFileRoute("/(public)/_public/login")({
-  component: LoginPage,
+import {
+  registerSchema,
+  type RegisterFormValues,
+} from "@/features/auth/schemas/register-schema";
+import { useRegister } from "@/features/auth/hooks/use-register";
+export const Route = createFileRoute("/(public)/_public/register")({
+  component: RegisterPage,
 });
 
-function LoginPage() {
-  const {mutate: login } = useLogin();
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+function RegisterPage() {
+    const {mutate: register } = useRegister();
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Logging in with:", data);
-    login(data);
-    // handle login logic
+  const onSubmit = (data: RegisterFormValues) => {
+    console.log("Registering user:", data);
+    register(data);
+    // handle registration logic
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
       <Card className="w-full max-w-sm p-4 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
+          <CardTitle className="text-2xl">Register</CardTitle>
+          <CardDescription>Create a new account to get started</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -64,10 +61,10 @@ function LoginPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>username</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="username"
+                        placeholder="your_username"
                         autoComplete="username"
                         {...field}
                       />
@@ -97,16 +94,16 @@ function LoginPage() {
               />
 
               <Button type="submit" className="w-full">
-                Log in
+                Register
               </Button>
             </form>
           </Form>
         </CardContent>
 
         <CardFooter className="text-sm text-muted-foreground justify-center">
-          Don’t have an account?{" "}
-          <a href="/register" className="ml-1 underline">
-            Register
+          Already have an account?{" "}
+          <a href="/login" className="ml-1 underline">
+            Log in
           </a>
         </CardFooter>
       </Card>
