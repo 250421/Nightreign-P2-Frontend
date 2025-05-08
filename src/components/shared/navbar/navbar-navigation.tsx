@@ -13,11 +13,19 @@ import { Link } from "@tanstack/react-router"
 export const NavbarNavigation = () => {
     return (
         <NavigationMenu>
-            <NavigationMenuList>
+            <NavigationMenuList className="gap-x-3">
                 <NavigationMenuItem>
                     <Link to={"/dashboard"}>
                         <NavigationMenuLink className="bg-red-800">
                             Home
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                    <Link to={"/lobbies"}>
+                        <NavigationMenuLink className="bg-red-800">
+                            Lobbies
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>

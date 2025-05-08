@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as authAuthImport } from './routes/(auth)/_auth'
 import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
+import { Route as authAuthLobbiesImport } from './routes/(auth)/_auth.lobbies'
 import { Route as authAuthDashboardImport } from './routes/(auth)/_auth.dashboard'
 import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
 
@@ -44,6 +45,12 @@ const authAuthRoute = authAuthImport.update({
 const authAuthRulesRoute = authAuthRulesImport.update({
   id: '/rules',
   path: '/rules',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const authAuthLobbiesRoute = authAuthLobbiesImport.update({
+  id: '/lobbies',
+  path: '/lobbies',
   getParentRoute: () => authAuthRoute,
 } as any)
 
@@ -98,6 +105,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthDashboardImport
       parentRoute: typeof authAuthImport
     }
+    '/(auth)/_auth/lobbies': {
+      id: '/(auth)/_auth/lobbies'
+      path: '/lobbies'
+      fullPath: '/lobbies'
+      preLoaderRoute: typeof authAuthLobbiesImport
+      parentRoute: typeof authAuthImport
+    }
     '/(auth)/_auth/rules': {
       id: '/(auth)/_auth/rules'
       path: '/rules'
@@ -113,12 +127,14 @@ declare module '@tanstack/react-router' {
 interface authAuthRouteChildren {
   authAuthCharacterPageRoute: typeof authAuthCharacterPageRoute
   authAuthDashboardRoute: typeof authAuthDashboardRoute
+  authAuthLobbiesRoute: typeof authAuthLobbiesRoute
   authAuthRulesRoute: typeof authAuthRulesRoute
 }
 
 const authAuthRouteChildren: authAuthRouteChildren = {
   authAuthCharacterPageRoute: authAuthCharacterPageRoute,
   authAuthDashboardRoute: authAuthDashboardRoute,
+  authAuthLobbiesRoute: authAuthLobbiesRoute,
   authAuthRulesRoute: authAuthRulesRoute,
 }
 
@@ -140,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/': typeof authAuthRouteWithChildren
   '/character-page': typeof authAuthCharacterPageRoute
   '/dashboard': typeof authAuthDashboardRoute
+  '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
 }
 
@@ -147,6 +164,7 @@ export interface FileRoutesByTo {
   '/': typeof authAuthRouteWithChildren
   '/character-page': typeof authAuthCharacterPageRoute
   '/dashboard': typeof authAuthDashboardRoute
+  '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
 }
 
@@ -157,14 +175,15 @@ export interface FileRoutesById {
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(auth)/_auth/character-page': typeof authAuthCharacterPageRoute
   '/(auth)/_auth/dashboard': typeof authAuthDashboardRoute
+  '/(auth)/_auth/lobbies': typeof authAuthLobbiesRoute
   '/(auth)/_auth/rules': typeof authAuthRulesRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/character-page' | '/dashboard' | '/rules'
+  fullPaths: '/' | '/character-page' | '/dashboard' | '/lobbies' | '/rules'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/character-page' | '/dashboard' | '/rules'
+  to: '/' | '/character-page' | '/dashboard' | '/lobbies' | '/rules'
   id:
     | '__root__'
     | '/'
@@ -172,6 +191,7 @@ export interface FileRouteTypes {
     | '/(auth)/_auth'
     | '/(auth)/_auth/character-page'
     | '/(auth)/_auth/dashboard'
+    | '/(auth)/_auth/lobbies'
     | '/(auth)/_auth/rules'
   fileRoutesById: FileRoutesById
 }
@@ -215,6 +235,7 @@ export const routeTree = rootRoute
       "children": [
         "/(auth)/_auth/character-page",
         "/(auth)/_auth/dashboard",
+        "/(auth)/_auth/lobbies",
         "/(auth)/_auth/rules"
       ]
     },
@@ -224,6 +245,10 @@ export const routeTree = rootRoute
     },
     "/(auth)/_auth/dashboard": {
       "filePath": "(auth)/_auth.dashboard.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/lobbies": {
+      "filePath": "(auth)/_auth.lobbies.tsx",
       "parent": "/(auth)/_auth"
     },
     "/(auth)/_auth/rules": {
