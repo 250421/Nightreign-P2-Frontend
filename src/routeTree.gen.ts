@@ -8,17 +8,55 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as authAuthImport } from './routes/(auth)/_auth'
+import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
+import { Route as authAuthDashboardImport } from './routes/(auth)/_auth.dashboard'
+import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
+
+// Create Virtual Routes
+
+const authImport = createFileRoute('/(auth)')()
 
 // Create/Update Routes
+
+const authRoute = authImport.update({
+  id: '/(auth)',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const authAuthRoute = authAuthImport.update({
+  id: '/_auth',
+  getParentRoute: () => authRoute,
+} as any)
+
+const authAuthRulesRoute = authAuthRulesImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const authAuthDashboardRoute = authAuthDashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const authAuthCharacterPageRoute = authAuthCharacterPageImport.update({
+  id: '/character-page',
+  path: '/character-page',
+  getParentRoute: () => authAuthRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -32,39 +70,120 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/(auth)': {
+      id: '/(auth)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof authImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/_auth': {
+      id: '/(auth)/_auth'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof authAuthImport
+      parentRoute: typeof authRoute
+    }
+    '/(auth)/_auth/character-page': {
+      id: '/(auth)/_auth/character-page'
+      path: '/character-page'
+      fullPath: '/character-page'
+      preLoaderRoute: typeof authAuthCharacterPageImport
+      parentRoute: typeof authAuthImport
+    }
+    '/(auth)/_auth/dashboard': {
+      id: '/(auth)/_auth/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof authAuthDashboardImport
+      parentRoute: typeof authAuthImport
+    }
+    '/(auth)/_auth/rules': {
+      id: '/(auth)/_auth/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof authAuthRulesImport
+      parentRoute: typeof authAuthImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface authAuthRouteChildren {
+  authAuthCharacterPageRoute: typeof authAuthCharacterPageRoute
+  authAuthDashboardRoute: typeof authAuthDashboardRoute
+  authAuthRulesRoute: typeof authAuthRulesRoute
+}
+
+const authAuthRouteChildren: authAuthRouteChildren = {
+  authAuthCharacterPageRoute: authAuthCharacterPageRoute,
+  authAuthDashboardRoute: authAuthDashboardRoute,
+  authAuthRulesRoute: authAuthRulesRoute,
+}
+
+const authAuthRouteWithChildren = authAuthRoute._addFileChildren(
+  authAuthRouteChildren,
+)
+
+interface authRouteChildren {
+  authAuthRoute: typeof authAuthRouteWithChildren
+}
+
+const authRouteChildren: authRouteChildren = {
+  authAuthRoute: authAuthRouteWithChildren,
+}
+
+const authRouteWithChildren = authRoute._addFileChildren(authRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof authAuthRouteWithChildren
+  '/character-page': typeof authAuthCharacterPageRoute
+  '/dashboard': typeof authAuthDashboardRoute
+  '/rules': typeof authAuthRulesRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof authAuthRouteWithChildren
+  '/character-page': typeof authAuthCharacterPageRoute
+  '/dashboard': typeof authAuthDashboardRoute
+  '/rules': typeof authAuthRulesRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/(auth)': typeof authRouteWithChildren
+  '/(auth)/_auth': typeof authAuthRouteWithChildren
+  '/(auth)/_auth/character-page': typeof authAuthCharacterPageRoute
+  '/(auth)/_auth/dashboard': typeof authAuthDashboardRoute
+  '/(auth)/_auth/rules': typeof authAuthRulesRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/character-page' | '/dashboard' | '/rules'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/character-page' | '/dashboard' | '/rules'
+  id:
+    | '__root__'
+    | '/'
+    | '/(auth)'
+    | '/(auth)/_auth'
+    | '/(auth)/_auth/character-page'
+    | '/(auth)/_auth/dashboard'
+    | '/(auth)/_auth/rules'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  authRoute: typeof authRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  authRoute: authRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +196,39 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/(auth)"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/(auth)": {
+      "filePath": "(auth)",
+      "children": [
+        "/(auth)/_auth"
+      ]
+    },
+    "/(auth)/_auth": {
+      "filePath": "(auth)/_auth.tsx",
+      "parent": "/(auth)",
+      "children": [
+        "/(auth)/_auth/character-page",
+        "/(auth)/_auth/dashboard",
+        "/(auth)/_auth/rules"
+      ]
+    },
+    "/(auth)/_auth/character-page": {
+      "filePath": "(auth)/_auth.character-page.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/dashboard": {
+      "filePath": "(auth)/_auth.dashboard.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/rules": {
+      "filePath": "(auth)/_auth.rules.tsx",
+      "parent": "/(auth)/_auth"
     }
   }
 }

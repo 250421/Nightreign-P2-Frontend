@@ -1,0 +1,43 @@
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuIndicator,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+    NavigationMenuViewport,
+} from "@/components/ui/navigation-menu"
+import { Link } from "@tanstack/react-router"
+
+export const NavbarNavigation = () => {
+    return (
+        <NavigationMenu>
+            <NavigationMenuList>
+                <NavigationMenuItem>
+                    <Link to={"/dashboard"}>
+                        <NavigationMenuLink className="bg-red-800">
+                            Home
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                    <Link to={"/rules"}>
+                        <NavigationMenuLink className="bg-red-800">
+                            Rules
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                    <Link to={"/character-page"}>
+                        <NavigationMenuLink className="bg-red-800">
+                            Characters
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+            </NavigationMenuList>
+        </NavigationMenu>
+    )
+}
