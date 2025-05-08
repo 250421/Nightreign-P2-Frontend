@@ -7,7 +7,7 @@ export const useGetCharacters = () => {
         queryKey: ["characters"],
         queryFn: async (): Promise<Character[]> => {
             try {
-                const response = await axiosInstance.get("/battlesimulator/api/characters");
+                const response = await axiosInstance.get("/characters");
                 return response.data;
             } catch (error) {
                 return [];
