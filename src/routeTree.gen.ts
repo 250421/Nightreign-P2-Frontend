@@ -8,63 +8,121 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
+import { Route as publicPublicImport } from './routes/(public)/_public'
+import { Route as publicPublicLoginImport } from './routes/(public)/_public.login'
+
+// Create Virtual Routes
+
+const publicImport = createFileRoute('/(public)')()
 
 // Create/Update Routes
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+const publicRoute = publicImport.update({
+  id: '/(public)',
   getParentRoute: () => rootRoute,
+} as any)
+
+const publicPublicRoute = publicPublicImport.update({
+  id: '/_public',
+  getParentRoute: () => publicRoute,
+} as any)
+
+const publicPublicLoginRoute = publicPublicLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => publicPublicRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/(public)': {
+      id: '/(public)'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+      preLoaderRoute: typeof publicImport
       parentRoute: typeof rootRoute
+    }
+    '/(public)/_public': {
+      id: '/(public)/_public'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof publicPublicImport
+      parentRoute: typeof publicRoute
+    }
+    '/(public)/_public/login': {
+      id: '/(public)/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof publicPublicLoginImport
+      parentRoute: typeof publicPublicImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface publicPublicRouteChildren {
+  publicPublicLoginRoute: typeof publicPublicLoginRoute
+}
+
+const publicPublicRouteChildren: publicPublicRouteChildren = {
+  publicPublicLoginRoute: publicPublicLoginRoute,
+}
+
+const publicPublicRouteWithChildren = publicPublicRoute._addFileChildren(
+  publicPublicRouteChildren,
+)
+
+interface publicRouteChildren {
+  publicPublicRoute: typeof publicPublicRouteWithChildren
+}
+
+const publicRouteChildren: publicRouteChildren = {
+  publicPublicRoute: publicPublicRouteWithChildren,
+}
+
+const publicRouteWithChildren =
+  publicRoute._addFileChildren(publicRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof publicPublicRouteWithChildren
+  '/login': typeof publicPublicLoginRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof publicPublicRouteWithChildren
+  '/login': typeof publicPublicLoginRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
+  '/(public)': typeof publicRouteWithChildren
+  '/(public)/_public': typeof publicPublicRouteWithChildren
+  '/(public)/_public/login': typeof publicPublicLoginRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/login'
+  id: '__root__' | '/(public)' | '/(public)/_public' | '/(public)/_public/login'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  publicRoute: typeof publicRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  publicRoute: publicRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +135,25 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/(public)"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/(public)": {
+      "filePath": "(public)",
+      "children": [
+        "/(public)/_public"
+      ]
+    },
+    "/(public)/_public": {
+      "filePath": "(public)/_public.tsx",
+      "parent": "/(public)",
+      "children": [
+        "/(public)/_public/login"
+      ]
+    },
+    "/(public)/_public/login": {
+      "filePath": "(public)/_public.login.tsx",
+      "parent": "/(public)/_public"
     }
   }
 }
