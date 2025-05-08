@@ -10,7 +10,7 @@ export const useAuth = () => {
             role: "USER" | "ADMIN";
         } | null > => {
             try {
-                const response = await axiosInstance.get("/api/auth/auth");
+                const response = await axiosInstance.get("/battlesimulator/api/auth");
                 return response.data;
             } catch (error) {
                 return null;

@@ -7,7 +7,7 @@ export const useSignOut = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async () => {
-            const response = await axiosInstance.post("/api/auth/sign-out");
+            const response = await axiosInstance.post("/battlesimulator/api/auth/sign-out");
             return response.data;
         },
         onSuccess: () => {
