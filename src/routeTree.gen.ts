@@ -13,8 +13,11 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
+import { Route as publicPublicImport } from './routes/(public)/_public'
 import { Route as authAuthImport } from './routes/(auth)/_auth'
+import { Route as authAuthIndexImport } from './routes/(auth)/_auth.index'
+import { Route as publicPublicRegisterImport } from './routes/(public)/_public.register'
+import { Route as publicPublicLoginImport } from './routes/(public)/_public.login'
 import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
 import { Route as authAuthLobbiesImport } from './routes/(auth)/_auth.lobbies'
 import { Route as authAuthDashboardImport } from './routes/(auth)/_auth.dashboard'
@@ -22,24 +25,47 @@ import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.char
 
 // Create Virtual Routes
 
+const publicImport = createFileRoute('/(public)')()
 const authImport = createFileRoute('/(auth)')()
 
 // Create/Update Routes
+
+const publicRoute = publicImport.update({
+  id: '/(public)',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const authRoute = authImport.update({
   id: '/(auth)',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRoute,
+const publicPublicRoute = publicPublicImport.update({
+  id: '/_public',
+  getParentRoute: () => publicRoute,
 } as any)
 
 const authAuthRoute = authAuthImport.update({
   id: '/_auth',
   getParentRoute: () => authRoute,
+} as any)
+
+const authAuthIndexRoute = authAuthIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const publicPublicRegisterRoute = publicPublicRegisterImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => publicPublicRoute,
+} as any)
+
+const publicPublicLoginRoute = publicPublicLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => publicPublicRoute,
 } as any)
 
 const authAuthRulesRoute = authAuthRulesImport.update({
@@ -70,13 +96,6 @@ const authAuthCharacterPageRoute = authAuthCharacterPageImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
     '/(auth)': {
       id: '/(auth)'
       path: '/'
@@ -90,6 +109,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof authAuthImport
       parentRoute: typeof authRoute
+    }
+    '/(public)': {
+      id: '/(public)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof publicImport
+      parentRoute: typeof rootRoute
+    }
+    '/(public)/_public': {
+      id: '/(public)/_public'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof publicPublicImport
+      parentRoute: typeof publicRoute
     }
     '/(auth)/_auth/character-page': {
       id: '/(auth)/_auth/character-page'
@@ -119,6 +152,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthRulesImport
       parentRoute: typeof authAuthImport
     }
+    '/(public)/_public/login': {
+      id: '/(public)/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof publicPublicLoginImport
+      parentRoute: typeof publicPublicImport
+    }
+    '/(public)/_public/register': {
+      id: '/(public)/_public/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof publicPublicRegisterImport
+      parentRoute: typeof publicPublicImport
+    }
+    '/(auth)/_auth/': {
+      id: '/(auth)/_auth/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof authAuthIndexImport
+      parentRoute: typeof authAuthImport
+    }
   }
 }
 
@@ -129,6 +183,7 @@ interface authAuthRouteChildren {
   authAuthDashboardRoute: typeof authAuthDashboardRoute
   authAuthLobbiesRoute: typeof authAuthLobbiesRoute
   authAuthRulesRoute: typeof authAuthRulesRoute
+  authAuthIndexRoute: typeof authAuthIndexRoute
 }
 
 const authAuthRouteChildren: authAuthRouteChildren = {
@@ -136,6 +191,7 @@ const authAuthRouteChildren: authAuthRouteChildren = {
   authAuthDashboardRoute: authAuthDashboardRoute,
   authAuthLobbiesRoute: authAuthLobbiesRoute,
   authAuthRulesRoute: authAuthRulesRoute,
+  authAuthIndexRoute: authAuthIndexRoute,
 }
 
 const authAuthRouteWithChildren = authAuthRoute._addFileChildren(
@@ -152,58 +208,109 @@ const authRouteChildren: authRouteChildren = {
 
 const authRouteWithChildren = authRoute._addFileChildren(authRouteChildren)
 
+interface publicPublicRouteChildren {
+  publicPublicLoginRoute: typeof publicPublicLoginRoute
+  publicPublicRegisterRoute: typeof publicPublicRegisterRoute
+}
+
+const publicPublicRouteChildren: publicPublicRouteChildren = {
+  publicPublicLoginRoute: publicPublicLoginRoute,
+  publicPublicRegisterRoute: publicPublicRegisterRoute,
+}
+
+const publicPublicRouteWithChildren = publicPublicRoute._addFileChildren(
+  publicPublicRouteChildren,
+)
+
+interface publicRouteChildren {
+  publicPublicRoute: typeof publicPublicRouteWithChildren
+}
+
+const publicRouteChildren: publicRouteChildren = {
+  publicPublicRoute: publicPublicRouteWithChildren,
+}
+
+const publicRouteWithChildren =
+  publicRoute._addFileChildren(publicRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '/': typeof authAuthRouteWithChildren
+  '/': typeof authAuthIndexRoute
   '/character-page': typeof authAuthCharacterPageRoute
   '/dashboard': typeof authAuthDashboardRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
+  '/login': typeof publicPublicLoginRoute
+  '/register': typeof publicPublicRegisterRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof authAuthRouteWithChildren
+  '/': typeof authAuthIndexRoute
   '/character-page': typeof authAuthCharacterPageRoute
   '/dashboard': typeof authAuthDashboardRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
+  '/login': typeof publicPublicLoginRoute
+  '/register': typeof publicPublicRegisterRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
   '/(auth)': typeof authRouteWithChildren
   '/(auth)/_auth': typeof authAuthRouteWithChildren
+  '/(public)': typeof publicRouteWithChildren
+  '/(public)/_public': typeof publicPublicRouteWithChildren
   '/(auth)/_auth/character-page': typeof authAuthCharacterPageRoute
   '/(auth)/_auth/dashboard': typeof authAuthDashboardRoute
   '/(auth)/_auth/lobbies': typeof authAuthLobbiesRoute
   '/(auth)/_auth/rules': typeof authAuthRulesRoute
+  '/(public)/_public/login': typeof publicPublicLoginRoute
+  '/(public)/_public/register': typeof publicPublicRegisterRoute
+  '/(auth)/_auth/': typeof authAuthIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/character-page' | '/dashboard' | '/lobbies' | '/rules'
+  fullPaths:
+    | '/'
+    | '/character-page'
+    | '/dashboard'
+    | '/lobbies'
+    | '/rules'
+    | '/login'
+    | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/character-page' | '/dashboard' | '/lobbies' | '/rules'
+  to:
+    | '/'
+    | '/character-page'
+    | '/dashboard'
+    | '/lobbies'
+    | '/rules'
+    | '/login'
+    | '/register'
   id:
     | '__root__'
-    | '/'
     | '/(auth)'
     | '/(auth)/_auth'
+    | '/(public)'
+    | '/(public)/_public'
     | '/(auth)/_auth/character-page'
     | '/(auth)/_auth/dashboard'
     | '/(auth)/_auth/lobbies'
     | '/(auth)/_auth/rules'
+    | '/(public)/_public/login'
+    | '/(public)/_public/register'
+    | '/(auth)/_auth/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   authRoute: typeof authRouteWithChildren
+  publicRoute: typeof publicRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   authRoute: authRouteWithChildren,
+  publicRoute: publicRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -216,12 +323,9 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/(auth)"
+        "/(auth)",
+        "/(public)"
       ]
-    },
-    "/": {
-      "filePath": "index.tsx"
     },
     "/(auth)": {
       "filePath": "(auth)",
@@ -236,7 +340,22 @@ export const routeTree = rootRoute
         "/(auth)/_auth/character-page",
         "/(auth)/_auth/dashboard",
         "/(auth)/_auth/lobbies",
-        "/(auth)/_auth/rules"
+        "/(auth)/_auth/rules",
+        "/(auth)/_auth/"
+      ]
+    },
+    "/(public)": {
+      "filePath": "(public)",
+      "children": [
+        "/(public)/_public"
+      ]
+    },
+    "/(public)/_public": {
+      "filePath": "(public)/_public.tsx",
+      "parent": "/(public)",
+      "children": [
+        "/(public)/_public/login",
+        "/(public)/_public/register"
       ]
     },
     "/(auth)/_auth/character-page": {
@@ -253,6 +372,18 @@ export const routeTree = rootRoute
     },
     "/(auth)/_auth/rules": {
       "filePath": "(auth)/_auth.rules.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(public)/_public/login": {
+      "filePath": "(public)/_public.login.tsx",
+      "parent": "/(public)/_public"
+    },
+    "/(public)/_public/register": {
+      "filePath": "(public)/_public.register.tsx",
+      "parent": "/(public)/_public"
+    },
+    "/(auth)/_auth/": {
+      "filePath": "(auth)/_auth.index.tsx",
       "parent": "/(auth)/_auth"
     }
   }

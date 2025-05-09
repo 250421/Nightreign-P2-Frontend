@@ -2,11 +2,11 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 
-export const Route = createFileRoute("/(auth)/_auth")({
-  component: RouteComponent,
+export const Route = createFileRoute("/(public)/_public")({
+  component: PublicLayout,
 });
 
-function RouteComponent() {
+function PublicLayout() {
   const { data: user, isLoading } = useAuth();
 
   if (isLoading)
@@ -16,13 +16,13 @@ function RouteComponent() {
       </div>
     );
 
-  if (!user) {
-    return <Navigate to={"/login"} />;
+  if (user) {
+    return <Navigate to={"/"} />;
   }
-
+  
   return (
-    <main className="max-w-screen mx-auto w-11/12 py-10">
+    <div className="">
       <Outlet />
-    </main>
+    </div>
   );
 }

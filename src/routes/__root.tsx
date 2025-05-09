@@ -3,6 +3,7 @@ import {
     QueryClient,
     QueryClientProvider,
   } from '@tanstack/react-query'
+import { Toaster } from "sonner";
 
 export const Route = createRootRoute({
     component: () => <RootLayout /> ,
@@ -17,6 +18,7 @@ export const Route = createRootRoute({
           <div>
               <QueryClientProvider client={queryClient}>
                   <Outlet />
+                  <Toaster  />
               </QueryClientProvider>
           </div>
       )
