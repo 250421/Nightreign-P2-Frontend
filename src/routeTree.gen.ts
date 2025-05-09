@@ -20,7 +20,6 @@ import { Route as publicPublicRegisterImport } from './routes/(public)/_public.r
 import { Route as publicPublicLoginImport } from './routes/(public)/_public.login'
 import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
 import { Route as authAuthLobbiesImport } from './routes/(auth)/_auth.lobbies'
-import { Route as authAuthDashboardImport } from './routes/(auth)/_auth.dashboard'
 import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
 
 // Create Virtual Routes
@@ -80,12 +79,6 @@ const authAuthLobbiesRoute = authAuthLobbiesImport.update({
   getParentRoute: () => authAuthRoute,
 } as any)
 
-const authAuthDashboardRoute = authAuthDashboardImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => authAuthRoute,
-} as any)
-
 const authAuthCharacterPageRoute = authAuthCharacterPageImport.update({
   id: '/character-page',
   path: '/character-page',
@@ -131,13 +124,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthCharacterPageImport
       parentRoute: typeof authAuthImport
     }
-    '/(auth)/_auth/dashboard': {
-      id: '/(auth)/_auth/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof authAuthDashboardImport
-      parentRoute: typeof authAuthImport
-    }
     '/(auth)/_auth/lobbies': {
       id: '/(auth)/_auth/lobbies'
       path: '/lobbies'
@@ -180,7 +166,6 @@ declare module '@tanstack/react-router' {
 
 interface authAuthRouteChildren {
   authAuthCharacterPageRoute: typeof authAuthCharacterPageRoute
-  authAuthDashboardRoute: typeof authAuthDashboardRoute
   authAuthLobbiesRoute: typeof authAuthLobbiesRoute
   authAuthRulesRoute: typeof authAuthRulesRoute
   authAuthIndexRoute: typeof authAuthIndexRoute
@@ -188,7 +173,6 @@ interface authAuthRouteChildren {
 
 const authAuthRouteChildren: authAuthRouteChildren = {
   authAuthCharacterPageRoute: authAuthCharacterPageRoute,
-  authAuthDashboardRoute: authAuthDashboardRoute,
   authAuthLobbiesRoute: authAuthLobbiesRoute,
   authAuthRulesRoute: authAuthRulesRoute,
   authAuthIndexRoute: authAuthIndexRoute,
@@ -236,7 +220,6 @@ const publicRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof authAuthIndexRoute
   '/character-page': typeof authAuthCharacterPageRoute
-  '/dashboard': typeof authAuthDashboardRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
@@ -246,7 +229,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof authAuthIndexRoute
   '/character-page': typeof authAuthCharacterPageRoute
-  '/dashboard': typeof authAuthDashboardRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
@@ -260,7 +242,6 @@ export interface FileRoutesById {
   '/(public)': typeof publicRouteWithChildren
   '/(public)/_public': typeof publicPublicRouteWithChildren
   '/(auth)/_auth/character-page': typeof authAuthCharacterPageRoute
-  '/(auth)/_auth/dashboard': typeof authAuthDashboardRoute
   '/(auth)/_auth/lobbies': typeof authAuthLobbiesRoute
   '/(auth)/_auth/rules': typeof authAuthRulesRoute
   '/(public)/_public/login': typeof publicPublicLoginRoute
@@ -273,20 +254,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/character-page'
-    | '/dashboard'
     | '/lobbies'
     | '/rules'
     | '/login'
     | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/character-page'
-    | '/dashboard'
-    | '/lobbies'
-    | '/rules'
-    | '/login'
-    | '/register'
+  to: '/' | '/character-page' | '/lobbies' | '/rules' | '/login' | '/register'
   id:
     | '__root__'
     | '/(auth)'
@@ -294,7 +267,6 @@ export interface FileRouteTypes {
     | '/(public)'
     | '/(public)/_public'
     | '/(auth)/_auth/character-page'
-    | '/(auth)/_auth/dashboard'
     | '/(auth)/_auth/lobbies'
     | '/(auth)/_auth/rules'
     | '/(public)/_public/login'
@@ -338,7 +310,6 @@ export const routeTree = rootRoute
       "parent": "/(auth)",
       "children": [
         "/(auth)/_auth/character-page",
-        "/(auth)/_auth/dashboard",
         "/(auth)/_auth/lobbies",
         "/(auth)/_auth/rules",
         "/(auth)/_auth/"
@@ -360,10 +331,6 @@ export const routeTree = rootRoute
     },
     "/(auth)/_auth/character-page": {
       "filePath": "(auth)/_auth.character-page.tsx",
-      "parent": "/(auth)/_auth"
-    },
-    "/(auth)/_auth/dashboard": {
-      "filePath": "(auth)/_auth.dashboard.tsx",
       "parent": "/(auth)/_auth"
     },
     "/(auth)/_auth/lobbies": {
