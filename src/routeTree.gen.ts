@@ -18,6 +18,9 @@ import { Route as authAuthImport } from './routes/(auth)/_auth'
 import { Route as authAuthIndexImport } from './routes/(auth)/_auth.index'
 import { Route as publicPublicRegisterImport } from './routes/(public)/_public.register'
 import { Route as publicPublicLoginImport } from './routes/(public)/_public.login'
+import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
+import { Route as authAuthLobbiesImport } from './routes/(auth)/_auth.lobbies'
+import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
 
 // Create Virtual Routes
 
@@ -64,6 +67,24 @@ const publicPublicLoginRoute = publicPublicLoginImport.update({
   getParentRoute: () => publicPublicRoute,
 } as any)
 
+const authAuthRulesRoute = authAuthRulesImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const authAuthLobbiesRoute = authAuthLobbiesImport.update({
+  id: '/lobbies',
+  path: '/lobbies',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const authAuthCharacterPageRoute = authAuthCharacterPageImport.update({
+  id: '/character-page',
+  path: '/character-page',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -96,6 +117,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicPublicImport
       parentRoute: typeof publicRoute
     }
+    '/(auth)/_auth/character-page': {
+      id: '/(auth)/_auth/character-page'
+      path: '/character-page'
+      fullPath: '/character-page'
+      preLoaderRoute: typeof authAuthCharacterPageImport
+      parentRoute: typeof authAuthImport
+    }
+    '/(auth)/_auth/lobbies': {
+      id: '/(auth)/_auth/lobbies'
+      path: '/lobbies'
+      fullPath: '/lobbies'
+      preLoaderRoute: typeof authAuthLobbiesImport
+      parentRoute: typeof authAuthImport
+    }
+    '/(auth)/_auth/rules': {
+      id: '/(auth)/_auth/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof authAuthRulesImport
+      parentRoute: typeof authAuthImport
+    }
     '/(public)/_public/login': {
       id: '/(public)/_public/login'
       path: '/login'
@@ -123,10 +165,16 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface authAuthRouteChildren {
+  authAuthCharacterPageRoute: typeof authAuthCharacterPageRoute
+  authAuthLobbiesRoute: typeof authAuthLobbiesRoute
+  authAuthRulesRoute: typeof authAuthRulesRoute
   authAuthIndexRoute: typeof authAuthIndexRoute
 }
 
 const authAuthRouteChildren: authAuthRouteChildren = {
+  authAuthCharacterPageRoute: authAuthCharacterPageRoute,
+  authAuthLobbiesRoute: authAuthLobbiesRoute,
+  authAuthRulesRoute: authAuthRulesRoute,
   authAuthIndexRoute: authAuthIndexRoute,
 }
 
@@ -171,12 +219,18 @@ const publicRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '/': typeof authAuthIndexRoute
+  '/character-page': typeof authAuthCharacterPageRoute
+  '/lobbies': typeof authAuthLobbiesRoute
+  '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof authAuthIndexRoute
+  '/character-page': typeof authAuthCharacterPageRoute
+  '/lobbies': typeof authAuthLobbiesRoute
+  '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
 }
@@ -187,6 +241,9 @@ export interface FileRoutesById {
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(public)': typeof publicRouteWithChildren
   '/(public)/_public': typeof publicPublicRouteWithChildren
+  '/(auth)/_auth/character-page': typeof authAuthCharacterPageRoute
+  '/(auth)/_auth/lobbies': typeof authAuthLobbiesRoute
+  '/(auth)/_auth/rules': typeof authAuthRulesRoute
   '/(public)/_public/login': typeof publicPublicLoginRoute
   '/(public)/_public/register': typeof publicPublicRegisterRoute
   '/(auth)/_auth/': typeof authAuthIndexRoute
@@ -194,15 +251,24 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/character-page'
+    | '/lobbies'
+    | '/rules'
+    | '/login'
+    | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
+  to: '/' | '/character-page' | '/lobbies' | '/rules' | '/login' | '/register'
   id:
     | '__root__'
     | '/(auth)'
     | '/(auth)/_auth'
     | '/(public)'
     | '/(public)/_public'
+    | '/(auth)/_auth/character-page'
+    | '/(auth)/_auth/lobbies'
+    | '/(auth)/_auth/rules'
     | '/(public)/_public/login'
     | '/(public)/_public/register'
     | '/(auth)/_auth/'
@@ -243,6 +309,9 @@ export const routeTree = rootRoute
       "filePath": "(auth)/_auth.tsx",
       "parent": "/(auth)",
       "children": [
+        "/(auth)/_auth/character-page",
+        "/(auth)/_auth/lobbies",
+        "/(auth)/_auth/rules",
         "/(auth)/_auth/"
       ]
     },
@@ -259,6 +328,18 @@ export const routeTree = rootRoute
         "/(public)/_public/login",
         "/(public)/_public/register"
       ]
+    },
+    "/(auth)/_auth/character-page": {
+      "filePath": "(auth)/_auth.character-page.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/lobbies": {
+      "filePath": "(auth)/_auth.lobbies.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/rules": {
+      "filePath": "(auth)/_auth.rules.tsx",
+      "parent": "/(auth)/_auth"
     },
     "/(public)/_public/login": {
       "filePath": "(public)/_public.login.tsx",

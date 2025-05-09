@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/shared/navbar/navbar";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
@@ -21,8 +22,11 @@ function RouteComponent() {
   }
 
   return (
-    <main className="max-w-screen mx-auto w-11/12 py-10">
-      <Outlet />
-    </main>
+    <div>
+      <Navbar />
+      <main className="max-w-screen mx-auto w-11/12 py-10">
+        <Outlet />
+      </main>
+    </div>
   );
 }
