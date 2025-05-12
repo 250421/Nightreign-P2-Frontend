@@ -21,6 +21,7 @@ import { Route as publicPublicLoginImport } from './routes/(public)/_public.logi
 import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
 import { Route as authAuthLobbiesImport } from './routes/(auth)/_auth.lobbies'
 import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
+import { Route as authAuthBattleImport } from './routes/(auth)/_auth.battle'
 
 // Create Virtual Routes
 
@@ -85,6 +86,12 @@ const authAuthCharacterPageRoute = authAuthCharacterPageImport.update({
   getParentRoute: () => authAuthRoute,
 } as any)
 
+const authAuthBattleRoute = authAuthBattleImport.update({
+  id: '/battle',
+  path: '/battle',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -116,6 +123,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof publicPublicImport
       parentRoute: typeof publicRoute
+    }
+    '/(auth)/_auth/battle': {
+      id: '/(auth)/_auth/battle'
+      path: '/battle'
+      fullPath: '/battle'
+      preLoaderRoute: typeof authAuthBattleImport
+      parentRoute: typeof authAuthImport
     }
     '/(auth)/_auth/character-page': {
       id: '/(auth)/_auth/character-page'
@@ -165,6 +179,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface authAuthRouteChildren {
+  authAuthBattleRoute: typeof authAuthBattleRoute
   authAuthCharacterPageRoute: typeof authAuthCharacterPageRoute
   authAuthLobbiesRoute: typeof authAuthLobbiesRoute
   authAuthRulesRoute: typeof authAuthRulesRoute
@@ -172,6 +187,7 @@ interface authAuthRouteChildren {
 }
 
 const authAuthRouteChildren: authAuthRouteChildren = {
+  authAuthBattleRoute: authAuthBattleRoute,
   authAuthCharacterPageRoute: authAuthCharacterPageRoute,
   authAuthLobbiesRoute: authAuthLobbiesRoute,
   authAuthRulesRoute: authAuthRulesRoute,
@@ -219,6 +235,7 @@ const publicRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '/': typeof authAuthIndexRoute
+  '/battle': typeof authAuthBattleRoute
   '/character-page': typeof authAuthCharacterPageRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
@@ -228,6 +245,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof authAuthIndexRoute
+  '/battle': typeof authAuthBattleRoute
   '/character-page': typeof authAuthCharacterPageRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
@@ -241,6 +259,7 @@ export interface FileRoutesById {
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(public)': typeof publicRouteWithChildren
   '/(public)/_public': typeof publicPublicRouteWithChildren
+  '/(auth)/_auth/battle': typeof authAuthBattleRoute
   '/(auth)/_auth/character-page': typeof authAuthCharacterPageRoute
   '/(auth)/_auth/lobbies': typeof authAuthLobbiesRoute
   '/(auth)/_auth/rules': typeof authAuthRulesRoute
@@ -253,19 +272,28 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/battle'
     | '/character-page'
     | '/lobbies'
     | '/rules'
     | '/login'
     | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/character-page' | '/lobbies' | '/rules' | '/login' | '/register'
+  to:
+    | '/'
+    | '/battle'
+    | '/character-page'
+    | '/lobbies'
+    | '/rules'
+    | '/login'
+    | '/register'
   id:
     | '__root__'
     | '/(auth)'
     | '/(auth)/_auth'
     | '/(public)'
     | '/(public)/_public'
+    | '/(auth)/_auth/battle'
     | '/(auth)/_auth/character-page'
     | '/(auth)/_auth/lobbies'
     | '/(auth)/_auth/rules'
@@ -309,6 +337,7 @@ export const routeTree = rootRoute
       "filePath": "(auth)/_auth.tsx",
       "parent": "/(auth)",
       "children": [
+        "/(auth)/_auth/battle",
         "/(auth)/_auth/character-page",
         "/(auth)/_auth/lobbies",
         "/(auth)/_auth/rules",
@@ -328,6 +357,10 @@ export const routeTree = rootRoute
         "/(public)/_public/login",
         "/(public)/_public/register"
       ]
+    },
+    "/(auth)/_auth/battle": {
+      "filePath": "(auth)/_auth.battle.tsx",
+      "parent": "/(auth)/_auth"
     },
     "/(auth)/_auth/character-page": {
       "filePath": "(auth)/_auth.character-page.tsx",
