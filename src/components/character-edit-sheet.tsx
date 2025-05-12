@@ -32,7 +32,7 @@ export const CharacterEditSheet = (chara: Character) => {
             character_id: chara.character_id,
             name: chara.name,
             origin: chara.origin,
-            image: chara.image,
+            image: chara.characterImageUrl,
         },
     })
 
