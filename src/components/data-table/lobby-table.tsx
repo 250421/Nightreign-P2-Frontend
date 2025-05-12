@@ -7,8 +7,8 @@ async function getData(): Promise<Lobby[]> {
     return [
       {
         id: 0,
-        user_1: "User 1",
-        user_2: "User 2",
+        user_1: "Player 1",
+        user_2: "Player 2",
         isFull: false,
       },
     ]
