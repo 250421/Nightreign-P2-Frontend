@@ -4,19 +4,19 @@ export const GetCharacters: Character[] = [
   {
     character_id: 1,
     name: "Goku",
-    image: "./goku.webp",
+    characterImageUrl: "./goku.webp",
     origin: "",
   },
   {
     character_id: 2,
     name: "Superman",
-    image: "./superman.png",
+    characterImageUrl: "./superman.png",
     origin: "",
   },
   {
     character_id: 3,
     name: "Batman",
-    image: "./batman.jpg",
+    characterImageUrl: "./batman.jpg",
     origin: "",
   },
 ];

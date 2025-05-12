@@ -130,7 +130,7 @@ function BattleScreen() {
                   <CarouselItem key={character.character_id}>
                     <div className="p-1">
                       <img
-                        src={character.image}
+                        src={character.characterImageUrl}
                         alt={character.name}
                         className="rounded-lg w-full h-48 object-contain"
                       />
@@ -185,7 +185,7 @@ function BattleScreen() {
                   <CarouselItem key={character.character_id}>
                     <div className="p-1">
                       <img
-                        src={character.image}
+                        src={character.characterImageUrl}
                         alt={character.name}
                         className="rounded-lg w-full h-48 object-contain"
                       />
