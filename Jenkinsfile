@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  
+  tools {
+    nodejs 'NodeJS 16'
+  }
 
   environment {
     APP_NAME = 'battlesimulator-frontend'
