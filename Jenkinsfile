@@ -28,8 +28,11 @@ pipeline {
     stage('Update Lock File') {
       steps {
         // Remove existing lock file and generate a new one
-        sh 'rm -f package-lock.json'
-        sh 'npm install --no-audit --legacy-peer-deps'
+        sh '''
+            rm -f package-lock.json
+            npm cache clean --force
+            npm install --no-audit --legacy-peer-deps
+        '''
       }
     }
 
