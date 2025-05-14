@@ -3,7 +3,7 @@ import {
   type LoginFormValues,
 } from "@/features/auth/schemas/login-schema";
 
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute} from "@tanstack/react-router";
 import {
   Card,
   CardContent,
@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
 import { useLogin } from "@/features/auth/hooks/use-login";
 export const Route = createFileRoute("/(public)/_public/login")({
   component: LoginPage,

@@ -19,7 +19,7 @@ function RouteComponent() {
   const [characterSelect, updateSelectedCharacter] = useState<Character[]>();
   const [searchInput, updateSearchInput] = useState<string>("");
   const [ready, setReady] = useState(false);
-  const [p2ready, p2setReady] = useState(false);
+  const [p2ready] = useState(false);
 
   const addToEnd = (newChara: Character) => {
     updateSelectedCharacter(prevList => [...prevList ? prevList : [], newChara]);
