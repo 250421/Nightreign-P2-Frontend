@@ -12,11 +12,16 @@ import {
 } from "@/components/ui/carousel";
 import { toast } from "sonner";
 import { GetCharacters } from "@/mocks/getCharacters";
+import { useBattleResult } from "@/hooks/use-battle-result";
+import type { BattleResult } from "@/models/battle-result";
+import { Loader2 } from "lucide-react";
+import { PlayerCard } from "@/features/battle/PlayerCards";
 export const Route = createFileRoute("/(auth)/_auth/battle")({
   component: BattleScreen,
 });
 
 function BattleScreen() {
+  //TODO use LobbyData
   const [player1, setPlayer1] = useState<Player>({
     id: 1,
     username: "Player 1",
@@ -31,49 +36,40 @@ function BattleScreen() {
     selected: null,
     defeated: [],
   });
-
-  const [battleLog, setBattleLog] = useState<string[]>([]);
+  const { mutate, data: battleResult, error, isPending } = useBattleResult();
   const [winner, setWinner] = useState<string | null>(null);
 
   const p1CarouselRef = useRef<CarouselApi | null>(null);
   const p2CarouselRef = useRef<CarouselApi | null>(null);
 
-  const simulateBattle = () => {
+  const handleSimulate = () => {
     if (!player1.selected || !player2.selected) {
       toast("Select characters for both players!");
       return;
     }
-
-    const result = Math.random() < 0.5 ? "player1" : "player2"; // Replace with AI call
-
-    setBattleLog([
-      ...battleLog,
-      `${result === "player1" ? player1.selected?.name : player2.selected?.name} wins!`,
-    ]);
-
-    if (result === "player1") {
-      setPlayer2({
-        ...player2,
-        defeated: [...player2.defeated, player2.selected!],
-        selected: null,
-      });
-    } else {
-      setPlayer1({
-        ...player1,
-        defeated: [...player1.defeated, player1.selected!],
-        selected: null,
-      });
-    }
-
-    checkVictory(result);
-  };
-
-  const checkVictory = (result: string) => {
-    if (result === "player1" && player2.defeated.length >= 2) {
-      setWinner("Player 1");
-    } else if (result === "player2" && player1.defeated.length >= 2) {
-      setWinner("Player 2");
-    }
+    mutate(
+      {
+        fighter1: player1.selected.name,
+        fighter2: player2.selected.name,
+      },
+      {
+        onSuccess: (result: BattleResult) => {
+          if (result.winner === "Player 1") {
+            setPlayer2({
+              ...player2,
+              defeated: [...player2.defeated, player2.selected!],
+              selected: null,
+            });
+          } else {
+            setPlayer1({
+              ...player1,
+              defeated: [...player1.defeated, player1.selected!],
+              selected: null,
+            });
+          }
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -108,7 +104,6 @@ function BattleScreen() {
       selected: null,
       defeated: [],
     });
-    setBattleLog([]);
     setWinner(null);
     handleCharacterSelect(0, 1);
     handleCharacterSelect(0, 2);
@@ -118,7 +113,7 @@ function BattleScreen() {
     <div className="mx-auto space-y-6 p-6 max-w-5xl">
       <h1 className="text-3xl font-bold text-center">Battle Arena</h1>
       <div className="grid grid-cols-2 gap-4">
-        <Card>
+        {/* <Card>
           <CardContent className="p-4 space-y-4 flex flex-col items-center">
             <h2 className="text-xl font-semibold">Player 1</h2>
             <Carousel
@@ -172,7 +167,13 @@ function BattleScreen() {
               </p>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
+        <PlayerCard
+          player={player1}
+          playerNumber={1}
+          onSelect={handleCharacterSelect}
+          carouselRef={p1CarouselRef}
+        />
         <Card>
           <CardContent className="p-4 space-y-4 flex flex-col items-center">
             <h2 className="text-xl font-semibold">Player 2</h2>
@@ -230,12 +231,16 @@ function BattleScreen() {
         </Card>
       </div>
       <div className="flex justify-center mt-6">
-        <Button onClick={simulateBattle} disabled={!!winner}>
-          Begin Battle!
+        <Button onClick={handleSimulate} disabled={!!winner || isPending}>
+          {isPending ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            "Begin Battle!"
+          )}
         </Button>
         {winner && (
           <div className="text-xl font-bold text-green-600">
-            🏆 {winner} Wins the Match!
+            {winner} Wins the Match!
           </div>
         )}
         <Button variant="secondary" onClick={resetBattle}>
@@ -246,11 +251,20 @@ function BattleScreen() {
       <Separator />
       <div className="text-center">
         <h2 className="text-2xl font-semibold">Battle Log</h2>
-        <ul className="list-disc pl-5">
-          {battleLog.map((log, i) => (
-            <li key={i}>{log}</li>
-          ))}
-        </ul>
+        {isPending && <p>Simulating...</p>}
+        {error instanceof Error && (
+          <p className="text-red-600">❌ {error.message}</p>
+        )}
+        {battleResult && (
+          <div className="bg-gray-100 p-4 rounded shadow">
+            <p>
+              <strong>Winner:</strong> {battleResult.winner}
+            </p>
+            <p>
+              <strong>Reason:</strong> {battleResult.reason}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
