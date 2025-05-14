@@ -1,8 +1,13 @@
 pipeline {
   agent any
   
+  options {
+    timeout(time: 10, unit: 'MINUTES')
+    disableConcurrentBuilds()
+  }
+
   tools {
-    nodejs 'NodeJS 18'
+    nodejs 'NodeJS 20'
   }
 
   environment {
@@ -20,9 +25,11 @@ pipeline {
       }
     }
 
-    stage('Install Dependencies') {
+    stage('Update Lock File') {
       steps {
-        sh 'npm ci'
+        // Remove existing lock file and generate a new one
+        sh 'rm -f package-lock.json'
+        sh 'npm install --no-audit --legacy-peer-deps'
       }
     }
 
@@ -40,7 +47,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh 'npm run build'
+        sh 'npm run build --legacy-peer-deps'
       }
     }
 
@@ -69,6 +76,7 @@ pipeline {
     }
     always {
         echo 'Pipeline finished'
+        sh 'docker image prune -f || true'
     }
   }
 }
