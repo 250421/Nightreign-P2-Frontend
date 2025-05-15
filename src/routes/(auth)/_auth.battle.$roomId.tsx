@@ -4,13 +4,13 @@ import { Separator } from "@/components/ui/separator";
 import { useEffect, useRef, useState } from "react";
 import { type CarouselApi } from "@/components/ui/carousel";
 import { toast } from "sonner";
-import type { BattleResult } from "@/models/battle-result";
+import type { BattleResult } from "@/features/battle/dtos/responses/battle-result-response";
 import { PlayerCard } from "@/features/battle/PlayerCards";
 import { Client } from "@stomp/stompjs";
-import { useGetRoomById } from "@/hooks/use-get-room-by-id";
 import SockJS from "sockjs-client";
-import type { IsReadyRequest } from "@/models/is-ready-request";
-import type { RoomUser } from "@/models/room-user";
+import type { IsReadyRequest } from "@/features/battle/dtos/requests/is-ready-request";
+import { useGetRoomById } from "@/features/game-room/hooks/use-get-room-by-id";
+import type { Player } from "@/features/game-room/models/player";
 
 export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
   component: BattleScreen,
@@ -109,7 +109,7 @@ function BattleScreen() {
     setStompClient(client);
   }, []);
 
-  const [player1, setPlayer1] = useState<RoomUser>({
+  const [player1, setPlayer1] = useState<Player>({
     userId: 1,
     username: "Player 1",
     activeCharacters: [],
@@ -117,7 +117,7 @@ function BattleScreen() {
     battleReady: false,
     selectedCharacter: null,
   });
-  const [player2, setPlayer2] = useState<RoomUser>({
+  const [player2, setPlayer2] = useState<Player>({
     userId: 2,
     username: "Player 2",
     activeCharacters: [],
@@ -158,7 +158,7 @@ function BattleScreen() {
   // Factory function to create a character select handler
   // for each player
   const createCharacterSelectHandler = (
-    setPlayer: React.Dispatch<React.SetStateAction<RoomUser>>,
+    setPlayer: React.Dispatch<React.SetStateAction<Player>>,
     carouselRef: React.RefObject<CarouselApi | null>
   ) => {
     return (index: number) => {
@@ -230,7 +230,7 @@ function BattleScreen() {
                 userId: player1.userId.toString(),
                 username: player1?.username,
                 battleReady: true,
-                character_id: player1?.selectedCharacter?.character_id || null,
+                character_id: player1?.selectedCharacter?.id || null,
               });
             }
           }}
@@ -248,7 +248,7 @@ function BattleScreen() {
                 userId: player2.userId.toString(),
                 username: player2?.username,
                 battleReady: true,
-                character_id: player2?.selectedCharacter?.character_id || null,
+                character_id: player2?.selectedCharacter?.id || null,
               });
             }
           }}

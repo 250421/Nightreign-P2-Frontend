@@ -3,6 +3,8 @@ import type { GameCharacter } from "./game-character";
 export interface Player {
   userId: number;
   username: string;
-  activeCharacter: GameCharacter[];
+  activeCharacters: GameCharacter[];
   defeatedCharacters: GameCharacter[];
+  battleReady: boolean;
+  selectedCharacter: GameCharacter | null;
 }

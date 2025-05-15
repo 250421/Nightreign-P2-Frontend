@@ -9,11 +9,11 @@ import {
 // import type { Player } from "@/models/player";
 import type { RefObject } from "react";
 import { Loader2 } from "lucide-react";
-import type { RoomUser } from "@/models/room-user";
 import { useAuth } from "../auth/hooks/use-auth";
+import type { Player } from "../game-room/models/player";
 
 type PlayerCardProps = {
-  player: RoomUser;
+  player: Player;
   onSelect: (index: number) => void;
   carouselRef: RefObject<CarouselApi | null>;
   onSimulate: () => void;
@@ -40,10 +40,10 @@ export function PlayerCard({
         >
           <CarouselContent>
             {player.activeCharacters.map((character) => (
-              <CarouselItem key={character.character_id}>
+              <CarouselItem key={character.id}>
                 <div className="p-1">
                   <img
-                    src={character.characterImageUrl}
+                    src={character.characterImgUrl}
                     alt={character.name}
                     className="rounded-lg w-full h-48 object-contain"
                   />
@@ -57,17 +57,17 @@ export function PlayerCard({
             <Button
               variant="outline"
               className={`w-24 transition-all ${
-                player.selectedCharacter?.character_id ===
-                character.character_id
+                player.selectedCharacter?.id ===
+                character.id
                   ? "border-blue-500 shadow-md shadow-blue-400"
                   : ""
               }`}
               disabled={
                 player.defeatedCharacters.some(
-                  (c) => c.character_id === character.character_id
+                  (c) => c.id === character.id
                 ) || player.username !== user?.username
               }
-              key={character.character_id}
+              key={character.id}
               onClick={() => onSelect(idx)}
             >
               {character.name}
