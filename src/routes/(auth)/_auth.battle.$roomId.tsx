@@ -1,19 +1,14 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-// import type { Player } from "@/models/player";
 import { useEffect, useRef, useState } from "react";
 import { type CarouselApi } from "@/components/ui/carousel";
 import { toast } from "sonner";
-import { GetCharacters } from "@/mocks/getCharacters";
-import { useBattleResult } from "@/hooks/use-battle-result";
 import type { BattleResult } from "@/models/battle-result";
 import { PlayerCard } from "@/features/battle/PlayerCards";
 import { Client } from "@stomp/stompjs";
 import { useGetRoomById } from "@/hooks/use-get-room-by-id";
 import SockJS from "sockjs-client";
-import type { RoomResponse } from "@/models/room-response";
-import type { Room } from "@/models/room";
 import type { IsReadyRequest } from "@/models/is-ready-request";
 import type { RoomUser } from "@/models/room-user";
 
@@ -31,13 +26,10 @@ function BattleScreen() {
   const { data: roomDetails, isLoading: isRoomLoading } = useGetRoomById({
     id: roomId,
   });
-  const [gameRoom, setGameRoom] = useState<Room | null>(null);
 
   useEffect(() => {
     if (roomDetails) {
       console.log("Room details:", roomDetails);
-      // Handle room details here
-      // For example, you can update the player state based on room details
       setPlayer1({
         ...player1,
         ...roomDetails.players[0],
@@ -107,7 +99,6 @@ function BattleScreen() {
           // Process the received battle result and update the winner state
           if (data && data.winner) {
             setBattleResult(data);
-            // setWinner(data.winner);
           }
           console.log("Received battle result:", data);
         });
@@ -118,11 +109,10 @@ function BattleScreen() {
     setStompClient(client);
   }, []);
 
-  //TODO use LobbyData
   const [player1, setPlayer1] = useState<RoomUser>({
     userId: 1,
     username: "Player 1",
-    activeCharacters: GetCharacters,
+    activeCharacters: [],
     defeatedCharacters: [],
     battleReady: false,
     selectedCharacter: null,
@@ -130,108 +120,20 @@ function BattleScreen() {
   const [player2, setPlayer2] = useState<RoomUser>({
     userId: 2,
     username: "Player 2",
-    activeCharacters: GetCharacters,
+    activeCharacters: [],
     defeatedCharacters: [],
     battleReady: false,
     selectedCharacter: null,
   });
 
-  //using Battle result hook to simulate the battle from open ai
-  // const {
-  //   mutate: battleSimulate,
-  //   data: battleResult,
-  //   error,
-  //   isPending,
-  // } = useBattleResult();
-
+  // State to track the battle result
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
   // State to track the winner
   const [winner, setWinner] = useState<string | null>(null);
 
-  // Refs to store the carousel API for each player
+  // Refs to store the carousel API for each player need useref for scrollto logic
   const p1CarouselRef = useRef<CarouselApi | null>(null);
   const p2CarouselRef = useRef<CarouselApi | null>(null);
-
-  // Function to handle when Player 1 is ready
-  // This function is called when Player 2 clicks the "Ready" button
-  const handlePlayer1Ready = () => {
-    setPlayer1((prev) => ({ ...prev, battleReady: true }));
-  };
-
-  // Function to handle when Player 2 is ready
-  // This function is called when Player 2 clicks the "Ready" button
-  const handlePlayer2Ready = () => {
-    setPlayer2((prev) => ({ ...prev, battleReady: true }));
-  };
-
-  // Effect to simulate the battle when both players are ready
-  useEffect(() => {
-    if (player1.battleReady && player2.battleReady) {
-      // handleSimulate();
-    } else if (player1.battleReady && !player2.battleReady) {
-      toast("Waiting for Player 2 to be ready");
-    } else if (!player1.battleReady && player2.battleReady) {
-      toast("Waiting for Player 1 to be ready");
-    }
-    // If both players are not ready, do nothing
-  }, [player1.battleReady, player2.battleReady]);
-
-  // Function to handle the battle simulation
-  // const handleSimulate = () => {
-  //   // Check if both players have selected a character
-  //   // and are ready to battle
-  //   if (
-  //     !player1.selected ||
-  //     !player2.selected ||
-  //     !player1.isReady ||
-  //     !player2.isReady
-  //   ) {
-  //     toast("Waiting for both players to select a character");
-  //     return;
-  //   }
-
-  //   // Call the battle simulation API
-  //   // and pass the selected characters
-  //   // to determine the winner
-  //   battleSimulate(
-  //     {
-  //       fighter1: player1.selected.name,
-  //       fighter2: player2.selected.name,
-  //     },
-  //     {
-  //       onSuccess: (result: BattleResult) => {
-  //         // add defeated character to the defeated array
-  //         //clear selected character
-  //         // and reset the isReady state for both players
-  //         if (result.winner === "Player 1") {
-  //           setPlayer2({
-  //             ...player2,
-  //             defeated: [...player2.defeated, player2.selected!],
-  //             selected: null,
-  //             isReady: false,
-  //           });
-  //           setPlayer1({
-  //             ...player1,
-  //             selected: null,
-  //             isReady: false,
-  //           });
-  //         } else {
-  //           setPlayer1({
-  //             ...player1,
-  //             defeated: [...player1.defeated, player1.selected!],
-  //             selected: null,
-  //             isReady: false,
-  //           });
-  //           setPlayer2({
-  //             ...player2,
-  //             selected: null,
-  //             isReady: false,
-  //           });
-  //         }
-  //       },
-  //     }
-  //   );
-  // };
 
   // Effect to reset the battle when the component mounts
   // This is to ensure that the players start with the first character selected
@@ -240,13 +142,14 @@ function BattleScreen() {
     handlePlayer2Select(0);
   }, []);
 
+
   // Effect to check if either player has been defeated
   // and set the winner accordingly
   useEffect(() => {
-    if (player1.defeatedCharacters.length === player1.activeCharacters.length) {
+    if (player1.defeatedCharacters.length === player1.activeCharacters.length && player1.activeCharacters.length > 0) {
       setWinner("Player 2");
     } else if (
-      player2.defeatedCharacters.length === player2.activeCharacters.length
+      player2.defeatedCharacters.length === player2.activeCharacters.length  && player2.activeCharacters.length > 0
     ) {
       setWinner("Player 1");
     }
@@ -273,6 +176,7 @@ function BattleScreen() {
     setPlayer1,
     p1CarouselRef
   );
+
   const handlePlayer2Select = createCharacterSelectHandler(
     setPlayer2,
     p2CarouselRef
@@ -284,7 +188,7 @@ function BattleScreen() {
     setPlayer1({
       userId: 1,
       username: "Player 1",
-      activeCharacters: GetCharacters,
+      activeCharacters: [],
       defeatedCharacters: [],
       battleReady: false,
       selectedCharacter: null,
@@ -292,7 +196,7 @@ function BattleScreen() {
     setPlayer2({
       userId: 2,
       username: "Player 2",
-      activeCharacters: GetCharacters,
+      activeCharacters: [],
       defeatedCharacters: [],
       battleReady: false,
       selectedCharacter: null,
@@ -309,8 +213,6 @@ function BattleScreen() {
       destination: "/app/battle/isReady",
       body: JSON.stringify(request),
     });
-
-    toast.success("");
   };
 
   return (
@@ -368,10 +270,8 @@ function BattleScreen() {
       <Separator />
       <div className="text-center">
         <h2 className="text-2xl font-semibold">Battle Log</h2>
-        {false && <p>Simulating...</p>}
-        {/* {error instanceof Error && (
-          <p className="text-red-600">{error.message}</p>
-        )} */}
+        
+        {/* {false && <p>Simulating...</p>} */}
         {battleResult && (
           <div className="bg-gray-100 p-4 rounded shadow">
             <p>
