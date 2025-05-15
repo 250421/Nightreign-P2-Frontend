@@ -6,22 +6,30 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import type { Player } from "@/models/player";
+// import type { Player } from "@/models/player";
 import type { RefObject } from "react";
+import { Loader2 } from "lucide-react";
+import type { RoomUser } from "@/models/room-user";
+import { useAuth } from "../auth/hooks/use-auth";
 
 type PlayerCardProps = {
-  player: Player;
-  playerNumber: number;
-  onSelect: (index: number, playerNumber: number) => void;
+  player: RoomUser;
+  onSelect: (index: number) => void;
   carouselRef: RefObject<CarouselApi | null>;
+  onSimulate: () => void;
+  isSimulating: boolean;
+  disabled: boolean;
 };
 
 export function PlayerCard({
   player,
-  playerNumber,
   onSelect,
   carouselRef,
+  onSimulate,
+  isSimulating,
+  disabled,
 }: PlayerCardProps) {
+  const { data: user } = useAuth();
   return (
     <Card>
       <CardContent className="p-4 space-y-4 flex flex-col items-center">
@@ -31,7 +39,7 @@ export function PlayerCard({
           setApi={(api) => (carouselRef.current = api)}
         >
           <CarouselContent>
-            {player.team.map((character) => (
+            {player.activeCharacters.map((character) => (
               <CarouselItem key={character.character_id}>
                 <div className="p-1">
                   <img
@@ -45,19 +53,22 @@ export function PlayerCard({
           </CarouselContent>
         </Carousel>
         <div className="flex flex-wrap gap-2">
-          {player.team.map((character, idx) => (
+          {player.activeCharacters.map((character, idx) => (
             <Button
               variant="outline"
               className={`w-24 transition-all ${
-                player.selected?.character_id === character.character_id
+                player.selectedCharacter?.character_id ===
+                character.character_id
                   ? "border-blue-500 shadow-md shadow-blue-400"
                   : ""
               }`}
-              disabled={player.defeated.some(
-                (c) => c.character_id === character.character_id
-              )}
+              disabled={
+                player.defeatedCharacters.some(
+                  (c) => c.character_id === character.character_id
+                ) || player.username !== user?.username
+              }
               key={character.character_id}
-              onClick={() => onSelect(idx, playerNumber)}
+              onClick={() => onSelect(idx)}
             >
               {character.name}
             </Button>
@@ -66,14 +77,32 @@ export function PlayerCard({
 
         <div>
           <p className="text-sm text-muted-foreground">
-            Selected Character: <strong>{player.selected?.name || "None"}</strong>
+            Selected Character:{" "}
+            <strong>{player.selectedCharacter?.name || "None"}</strong>
           </p>
           <p className="text-sm text-muted-foreground">
             Defeated Characters:{" "}
             <strong>
-              {player.defeated.map((c) => c.name).join(", ") || "None"}
+              {player.defeatedCharacters.map((c) => c.name).join(", ") ||
+                "None"}
             </strong>
           </p>
+        </div>
+
+        <div className="flex justify-center mt-4">
+          <Button
+            onClick={onSimulate}
+            disabled={disabled || player.selectedCharacter === null || player.username !== user?.username}
+            className={`${player.battleReady ? "bg-green-600 hover:bg-green-700" : ""}`}
+          >
+            {isSimulating ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : player.battleReady ? (
+              "Ready!"
+            ) : (
+              "Begin Battle!"
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>

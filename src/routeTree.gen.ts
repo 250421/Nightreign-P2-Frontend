@@ -21,8 +21,8 @@ import { Route as publicPublicLoginImport } from './routes/(public)/_public.logi
 import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
 import { Route as authAuthLobbiesImport } from './routes/(auth)/_auth.lobbies'
 import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
-import { Route as authAuthBattleImport } from './routes/(auth)/_auth.battle'
 import { Route as authlobbyLobbyImport } from './routes/(auth)/(lobby)/_lobby'
+import { Route as authAuthBattleRoomIdImport } from './routes/(auth)/_auth.battle.$roomId'
 import { Route as authlobbyLobbyCharacterSelectImport } from './routes/(auth)/(lobby)/_lobby.character-select'
 import { Route as authlobbyLobbyWaitingRoomLobbyIdImport } from './routes/(auth)/(lobby)/_lobby.waiting-room.$lobbyId'
 
@@ -95,15 +95,15 @@ const authAuthCharacterPageRoute = authAuthCharacterPageImport.update({
   getParentRoute: () => authAuthRoute,
 } as any)
 
-const authAuthBattleRoute = authAuthBattleImport.update({
-  id: '/battle',
-  path: '/battle',
-  getParentRoute: () => authAuthRoute,
-} as any)
-
 const authlobbyLobbyRoute = authlobbyLobbyImport.update({
   id: '/_lobby',
   getParentRoute: () => authlobbyRoute,
+} as any)
+
+const authAuthBattleRoomIdRoute = authAuthBattleRoomIdImport.update({
+  id: '/battle/$roomId',
+  path: '/battle/$roomId',
+  getParentRoute: () => authAuthRoute,
 } as any)
 
 const authlobbyLobbyCharacterSelectRoute =
@@ -166,13 +166,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authlobbyLobbyImport
       parentRoute: typeof authlobbyRoute
     }
-    '/(auth)/_auth/battle': {
-      id: '/(auth)/_auth/battle'
-      path: '/battle'
-      fullPath: '/battle'
-      preLoaderRoute: typeof authAuthBattleImport
-      parentRoute: typeof authAuthImport
-    }
     '/(auth)/_auth/character-page': {
       id: '/(auth)/_auth/character-page'
       path: '/character-page'
@@ -222,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authlobbyLobbyCharacterSelectImport
       parentRoute: typeof authlobbyLobbyImport
     }
+    '/(auth)/_auth/battle/$roomId': {
+      id: '/(auth)/_auth/battle/$roomId'
+      path: '/battle/$roomId'
+      fullPath: '/battle/$roomId'
+      preLoaderRoute: typeof authAuthBattleRoomIdImport
+      parentRoute: typeof authAuthImport
+    }
     '/(auth)/(lobby)/_lobby/waiting-room/$lobbyId': {
       id: '/(auth)/(lobby)/_lobby/waiting-room/$lobbyId'
       path: '/waiting-room/$lobbyId'
@@ -235,19 +235,19 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface authAuthRouteChildren {
-  authAuthBattleRoute: typeof authAuthBattleRoute
   authAuthCharacterPageRoute: typeof authAuthCharacterPageRoute
   authAuthLobbiesRoute: typeof authAuthLobbiesRoute
   authAuthRulesRoute: typeof authAuthRulesRoute
   authAuthIndexRoute: typeof authAuthIndexRoute
+  authAuthBattleRoomIdRoute: typeof authAuthBattleRoomIdRoute
 }
 
 const authAuthRouteChildren: authAuthRouteChildren = {
-  authAuthBattleRoute: authAuthBattleRoute,
   authAuthCharacterPageRoute: authAuthCharacterPageRoute,
   authAuthLobbiesRoute: authAuthLobbiesRoute,
   authAuthRulesRoute: authAuthRulesRoute,
   authAuthIndexRoute: authAuthIndexRoute,
+  authAuthBattleRoomIdRoute: authAuthBattleRoomIdRoute,
 }
 
 const authAuthRouteWithChildren = authAuthRoute._addFileChildren(
@@ -319,25 +319,25 @@ const publicRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '/': typeof authAuthIndexRoute
-  '/battle': typeof authAuthBattleRoute
   '/character-page': typeof authAuthCharacterPageRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
   '/character-select': typeof authlobbyLobbyCharacterSelectRoute
+  '/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/waiting-room/$lobbyId': typeof authlobbyLobbyWaitingRoomLobbyIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof authAuthIndexRoute
-  '/battle': typeof authAuthBattleRoute
   '/character-page': typeof authAuthCharacterPageRoute
   '/lobbies': typeof authAuthLobbiesRoute
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
   '/character-select': typeof authlobbyLobbyCharacterSelectRoute
+  '/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/waiting-room/$lobbyId': typeof authlobbyLobbyWaitingRoomLobbyIdRoute
 }
 
@@ -349,7 +349,6 @@ export interface FileRoutesById {
   '/(public)/_public': typeof publicPublicRouteWithChildren
   '/(auth)/(lobby)': typeof authlobbyRouteWithChildren
   '/(auth)/(lobby)/_lobby': typeof authlobbyLobbyRouteWithChildren
-  '/(auth)/_auth/battle': typeof authAuthBattleRoute
   '/(auth)/_auth/character-page': typeof authAuthCharacterPageRoute
   '/(auth)/_auth/lobbies': typeof authAuthLobbiesRoute
   '/(auth)/_auth/rules': typeof authAuthRulesRoute
@@ -357,6 +356,7 @@ export interface FileRoutesById {
   '/(public)/_public/register': typeof publicPublicRegisterRoute
   '/(auth)/_auth/': typeof authAuthIndexRoute
   '/(auth)/(lobby)/_lobby/character-select': typeof authlobbyLobbyCharacterSelectRoute
+  '/(auth)/_auth/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/(auth)/(lobby)/_lobby/waiting-room/$lobbyId': typeof authlobbyLobbyWaitingRoomLobbyIdRoute
 }
 
@@ -364,24 +364,24 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/battle'
     | '/character-page'
     | '/lobbies'
     | '/rules'
     | '/login'
     | '/register'
     | '/character-select'
+    | '/battle/$roomId'
     | '/waiting-room/$lobbyId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/battle'
     | '/character-page'
     | '/lobbies'
     | '/rules'
     | '/login'
     | '/register'
     | '/character-select'
+    | '/battle/$roomId'
     | '/waiting-room/$lobbyId'
   id:
     | '__root__'
@@ -391,7 +391,6 @@ export interface FileRouteTypes {
     | '/(public)/_public'
     | '/(auth)/(lobby)'
     | '/(auth)/(lobby)/_lobby'
-    | '/(auth)/_auth/battle'
     | '/(auth)/_auth/character-page'
     | '/(auth)/_auth/lobbies'
     | '/(auth)/_auth/rules'
@@ -399,6 +398,7 @@ export interface FileRouteTypes {
     | '/(public)/_public/register'
     | '/(auth)/_auth/'
     | '/(auth)/(lobby)/_lobby/character-select'
+    | '/(auth)/_auth/battle/$roomId'
     | '/(auth)/(lobby)/_lobby/waiting-room/$lobbyId'
   fileRoutesById: FileRoutesById
 }
@@ -438,11 +438,11 @@ export const routeTree = rootRoute
       "filePath": "(auth)/_auth.tsx",
       "parent": "/(auth)",
       "children": [
-        "/(auth)/_auth/battle",
         "/(auth)/_auth/character-page",
         "/(auth)/_auth/lobbies",
         "/(auth)/_auth/rules",
-        "/(auth)/_auth/"
+        "/(auth)/_auth/",
+        "/(auth)/_auth/battle/$roomId"
       ]
     },
     "/(public)": {
@@ -474,10 +474,6 @@ export const routeTree = rootRoute
         "/(auth)/(lobby)/_lobby/waiting-room/$lobbyId"
       ]
     },
-    "/(auth)/_auth/battle": {
-      "filePath": "(auth)/_auth.battle.tsx",
-      "parent": "/(auth)/_auth"
-    },
     "/(auth)/_auth/character-page": {
       "filePath": "(auth)/_auth.character-page.tsx",
       "parent": "/(auth)/_auth"
@@ -505,6 +501,10 @@ export const routeTree = rootRoute
     "/(auth)/(lobby)/_lobby/character-select": {
       "filePath": "(auth)/(lobby)/_lobby.character-select.tsx",
       "parent": "/(auth)/(lobby)/_lobby"
+    },
+    "/(auth)/_auth/battle/$roomId": {
+      "filePath": "(auth)/_auth.battle.$roomId.tsx",
+      "parent": "/(auth)/_auth"
     },
     "/(auth)/(lobby)/_lobby/waiting-room/$lobbyId": {
       "filePath": "(auth)/(lobby)/_lobby.waiting-room.$lobbyId.tsx",
