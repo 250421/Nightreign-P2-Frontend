@@ -43,7 +43,7 @@ export function PlayerCard({
               <CarouselItem key={character.id}>
                 <div className="p-1">
                   <img
-                    src={character.characterImgUrl}
+                    src={character.characterImageUrl}
                     alt={character.name}
                     className="rounded-lg w-full h-48 object-contain"
                   />

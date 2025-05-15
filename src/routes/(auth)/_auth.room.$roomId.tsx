@@ -1,13 +1,9 @@
 import { CharacterSelection } from "@/components/game-room/character-selection";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import type { LeaveRoomRequest } from "@/features/game-room/dtos/requests/leave-room-request";
 import { useGetRoomById } from "@/features/game-room/hooks/use-get-room-by-id";
 import type { Room } from "@/features/game-room/models/room";
-import { useGetCharacters } from "@/hooks/use-get-characters";
-import { cn } from "@/lib/utils";
 import type { Character } from "@/models/character";
 
 import { Client } from "@stomp/stompjs";
@@ -17,7 +13,6 @@ import {
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
-import { Check, Ellipsis } from "lucide-react";
 import { useEffect, useState } from "react";
 import SockJS from "sockjs-client";
 import { toast } from "sonner";
@@ -25,6 +20,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/(auth)/_auth/room/$roomId")({
   component: GameRoomIdPage,
 });
+
+
 
 function GameRoomIdPage() {
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -74,6 +71,13 @@ function GameRoomIdPage() {
               creator: data.creator.username,
             };
             setRoomDetails(room);
+
+            // if both players are ready, navigate to battle screen
+            if (room.players.length == 2 && room.players.at(0)?.readyForBattle && room.players.at(1)?.readyForBattle) {
+              navigate({
+                to: `/battle/${roomId}`,
+              });
+            }
           }
         });
       },
@@ -97,6 +101,23 @@ function GameRoomIdPage() {
     });
 
     toast.success(`Leaving room: ${request.roomId}`);
+  };
+
+  const handlePlayerReady = (request: { userId: number, isReadyForBattle: boolean, team: Character[] }) => {
+
+    if (!stompClient) return;
+
+    console.log("value of request.isReadyForBattle: " + request.isReadyForBattle)
+
+    stompClient.publish({
+      destination: "/app/room/ready",
+      body: JSON.stringify({
+        roomId: roomDetails?.id,
+        userId: request.userId,
+        readyForBattle: request.isReadyForBattle,
+        activeCharacters: request.team,
+      }),
+    });
   };
   return (
     <div>
@@ -137,7 +158,16 @@ function GameRoomIdPage() {
       </div>
 
 
-      <CharacterSelection/>
+      {roomDetails != null && user != null && user != undefined ?
+        <CharacterSelection {...{
+          room: roomDetails,
+          player: roomDetails.players.find((p1) => (p1.username == user.username)),
+          challenger: roomDetails.players.find((p1) => (p1.username != user.username)),
+          onPlayerReady: handlePlayerReady,
+        }
+        } />
+        :
+        <div>Error retrieving room data</div>}
     </div>
   );
 }

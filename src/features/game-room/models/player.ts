@@ -6,5 +6,6 @@ export interface Player {
   activeCharacters: GameCharacter[];
   defeatedCharacters: GameCharacter[];
   battleReady: boolean;
+  readyForBattle: boolean;
   selectedCharacter: GameCharacter | null;
 }
