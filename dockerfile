@@ -14,7 +14,8 @@ RUN NODE_ENV=production NODE_OPTIONS="--experimental-global-webcrypto --require 
 # Production stage with built-in Nginx config
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-# Create a simple default Nginx config directly
+
+# Clean nginx config
 RUN echo 'server { \
     listen 80; \
     location / { \
