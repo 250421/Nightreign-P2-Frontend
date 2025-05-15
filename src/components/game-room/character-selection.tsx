@@ -10,10 +10,10 @@ import type { Room } from "@/features/game-room/models/room";
 import type { Player } from "@/features/game-room/models/player";
 
 interface CharacterSelectionProps {
-    room: Room;
-    player: Player | undefined;
-    challenger: Player | undefined;
-    onPlayerReady: (request: { userId: number, isReadyForBattle: boolean, team: Character[] }) => void;
+  room: Room;
+  player: Player | undefined;
+  challenger: Player | undefined;
+  onPlayerReady: (request: { userId: number, isReadyForBattle: boolean, team: Character[] }) => void;
 }
 
 export const CharacterSelection = (props: CharacterSelectionProps) => {
@@ -35,7 +35,11 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
     updateSelectedCharacter(characterSelect?.filter(chara => chara !== characterSelect.at(0)));
   }
 
-  if(!props.room){
+  const removeCharacterAtIndex = (index: number) => {
+    updateSelectedCharacter(characterSelect?.filter(chara => chara !== characterSelect.at(index)));
+  }
+
+  if (!props.room) {
     return (
       <div>Error fetching room data</div>
     )
@@ -72,17 +76,19 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
                   className="w-[400px] h-[200px] cursor-pointer"
                   onClick={() => {
                     console.log(chara);
-                    if (characterSelect?.includes(chara)) {
-                      // "deselect character" by removing it
-                      removeCharacter(chara);
-                    }
-                    else if (characterSelect?.length == 3) {
-                      // Remove first selected and add the new one as third
-                      removeFirst();
-                      addToEnd(chara);
-                    }
-                    else {
-                      addToEnd(chara);
+                    if (!isReady) {
+                      if (characterSelect?.includes(chara)) {
+                        // "deselect character" by removing it
+                        removeCharacter(chara);
+                      }
+                      else if (characterSelect?.length == 3) {
+                        // Remove first selected and add the new one as third
+                        removeFirst();
+                        addToEnd(chara);
+                      }
+                      else {
+                        addToEnd(chara);
+                      }
                     }
                   }}>
                   <div className="flex justify-between">
@@ -101,21 +107,37 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
         <div className="fixed bottom-0 right-0 left-0 mx-5">
           <Card>
             <div className="flex flex-row gap-x-50 justify-center">
-              <Card className="w-50 h-50">
+              <Card className={`w-50 h-50 ${isReady ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              onClick={() => {
+                if(!isReady && characterSelect?.at(0)){
+                  removeCharacterAtIndex(0);
+                }
+              }}
+              >
                 <img
                   src={characterSelect?.at(0)?.characterImageUrl || "https://placehold.co/600x400/transparent/black?text=Character+1"}
                   alt={characterSelect?.at(0)?.name || "Placeholder"}
                   className="w-full h-full object-contain"
                 />
               </Card>
-              <Card className="w-50 h-50">
+              <Card className={`w-50 h-50 ${isReady ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              onClick={() => {
+                if(!isReady && characterSelect?.at(1)){
+                  removeCharacterAtIndex(1);
+                }
+              }}>
                 <img
                   src={characterSelect?.at(1)?.characterImageUrl || "https://placehold.co/600x400/transparent/black?text=Character+2"}
                   alt={characterSelect?.at(1)?.name || "Placeholder"}
                   className="w-full h-full object-contain"
                 />
               </Card>
-              <Card className="w-50 h-50">
+              <Card className={`w-50 h-50 ${isReady ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              onClick={() => {
+                if(!isReady && characterSelect?.at(2)){
+                  removeCharacterAtIndex(2);
+                }
+              }}>
                 <img
                   src={characterSelect?.at(2)?.characterImageUrl || "https://placehold.co/600x400/transparent/black?text=Character+3"}
                   alt={characterSelect?.at(2)?.name || "Placeholder"}
@@ -125,7 +147,7 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
             </div>
             <footer className="flex flex-row justify-center w-full">
               <Button className={`${isReady ? 'bg-red-500' : 'bg-green-500'} w-1/2 self-center justify-items-center`} disabled={characterSelect?.length !== 3} onClick={() => {
-                if(props.player && characterSelect){
+                if (props.player && characterSelect) {
                   const newReady = !isReady;
                   setIsReady(newReady)
                   props.onPlayerReady({
