@@ -115,6 +115,7 @@ function BattleScreen() {
     activeCharacters: [],
     defeatedCharacters: [],
     battleReady: false,
+    readyForBattle: true,
     selectedCharacter: null,
   });
   const [player2, setPlayer2] = useState<Player>({
@@ -123,6 +124,7 @@ function BattleScreen() {
     activeCharacters: [],
     defeatedCharacters: [],
     battleReady: false,
+    readyForBattle: true,
     selectedCharacter: null,
   });
 
@@ -191,6 +193,7 @@ function BattleScreen() {
       activeCharacters: [],
       defeatedCharacters: [],
       battleReady: false,
+      readyForBattle: true,
       selectedCharacter: null,
     });
     setPlayer2({
@@ -199,6 +202,7 @@ function BattleScreen() {
       activeCharacters: [],
       defeatedCharacters: [],
       battleReady: false,
+      readyForBattle: true,
       selectedCharacter: null,
     });
     setWinner(null);
@@ -230,7 +234,7 @@ function BattleScreen() {
                 userId: player1.userId.toString(),
                 username: player1?.username,
                 battleReady: true,
-                character_id: player1?.selectedCharacter?.id || null,
+                character_id: player1?.selectedCharacter?.character_id || null,
               });
             }
           }}
@@ -248,7 +252,7 @@ function BattleScreen() {
                 userId: player2.userId.toString(),
                 username: player2?.username,
                 battleReady: true,
-                character_id: player2?.selectedCharacter?.id || null,
+                character_id: player2?.selectedCharacter?.character_id || null,
               });
             }
           }}
