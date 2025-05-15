@@ -9,14 +9,14 @@ import {
 // import type { Player } from "@/models/player";
 import type { RefObject } from "react";
 import { Loader2 } from "lucide-react";
-import { useAuth } from "../auth/hooks/use-auth";
-import type { Player } from "../game-room/models/player";
+import { useAuth } from "../../auth/hooks/use-auth";
+import type { Player } from "../../game-room/models/player";
 
 type PlayerCardProps = {
   player: Player;
   onSelect: (index: number) => void;
   carouselRef: RefObject<CarouselApi | null>;
-  onSimulate: () => void;
+  onReady: () => void;
   isSimulating: boolean;
   disabled: boolean;
 };
@@ -25,7 +25,7 @@ export function PlayerCard({
   player,
   onSelect,
   carouselRef,
-  onSimulate,
+  onReady: onSimulate,
   isSimulating,
   disabled,
 }: PlayerCardProps) {
