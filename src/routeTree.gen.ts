@@ -23,8 +23,6 @@ import { Route as authAuthLobbyImport } from './routes/(auth)/_auth.lobby'
 import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
 import { Route as authAuthRoomRoomIdImport } from './routes/(auth)/_auth.room.$roomId'
 import { Route as authAuthBattleRoomIdImport } from './routes/(auth)/_auth.battle.$roomId'
-import { Route as authlobbyLobbyCharacterSelectImport } from './routes/(auth)/(lobby)/_lobby.character-select'
-import { Route as authlobbyLobbyWaitingRoomLobbyIdImport } from './routes/(auth)/(lobby)/_lobby.waiting-room.$lobbyId'
 
 // Create Virtual Routes
 
@@ -101,20 +99,6 @@ const authAuthBattleRoomIdRoute = authAuthBattleRoomIdImport.update({
   getParentRoute: () => authAuthRoute,
 } as any)
 
-const authlobbyLobbyCharacterSelectRoute =
-  authlobbyLobbyCharacterSelectImport.update({
-    id: '/character-select',
-    path: '/character-select',
-    getParentRoute: () => authlobbyLobbyRoute,
-  } as any)
-
-const authlobbyLobbyWaitingRoomLobbyIdRoute =
-  authlobbyLobbyWaitingRoomLobbyIdImport.update({
-    id: '/waiting-room/$lobbyId',
-    path: '/waiting-room/$lobbyId',
-    getParentRoute: () => authlobbyLobbyRoute,
-  } as any)
-
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -188,13 +172,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof authAuthIndexImport
       parentRoute: typeof authAuthImport
-    }
-    '/(auth)/(lobby)/_lobby/character-select': {
-      id: '/(auth)/(lobby)/_lobby/character-select'
-      path: '/character-select'
-      fullPath: '/character-select'
-      preLoaderRoute: typeof authlobbyLobbyCharacterSelectImport
-      parentRoute: typeof authlobbyLobbyImport
     }
     '/(auth)/_auth/battle/$roomId': {
       id: '/(auth)/_auth/battle/$roomId'
@@ -279,7 +256,6 @@ export interface FileRoutesByFullPath {
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
-  '/character-select': typeof authlobbyLobbyCharacterSelectRoute
   '/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/room/$roomId': typeof authAuthRoomRoomIdRoute
 }
@@ -291,7 +267,6 @@ export interface FileRoutesByTo {
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
-  '/character-select': typeof authlobbyLobbyCharacterSelectRoute
   '/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/room/$roomId': typeof authAuthRoomRoomIdRoute
 }
@@ -308,7 +283,6 @@ export interface FileRoutesById {
   '/(public)/_public/login': typeof publicPublicLoginRoute
   '/(public)/_public/register': typeof publicPublicRegisterRoute
   '/(auth)/_auth/': typeof authAuthIndexRoute
-  '/(auth)/(lobby)/_lobby/character-select': typeof authlobbyLobbyCharacterSelectRoute
   '/(auth)/_auth/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/(auth)/_auth/room/$roomId': typeof authAuthRoomRoomIdRoute
 }
@@ -322,7 +296,6 @@ export interface FileRouteTypes {
     | '/rules'
     | '/login'
     | '/register'
-    | '/character-select'
     | '/battle/$roomId'
     | '/room/$roomId'
   fileRoutesByTo: FileRoutesByTo
@@ -333,7 +306,6 @@ export interface FileRouteTypes {
     | '/rules'
     | '/login'
     | '/register'
-    | '/character-select'
     | '/battle/$roomId'
     | '/room/$roomId'
   id:
@@ -348,7 +320,6 @@ export interface FileRouteTypes {
     | '/(public)/_public/login'
     | '/(public)/_public/register'
     | '/(auth)/_auth/'
-    | '/(auth)/(lobby)/_lobby/character-select'
     | '/(auth)/_auth/battle/$roomId'
     | '/(auth)/_auth/room/$roomId'
   fileRoutesById: FileRoutesById
@@ -433,10 +404,6 @@ export const routeTree = rootRoute
     "/(auth)/_auth/": {
       "filePath": "(auth)/_auth.index.tsx",
       "parent": "/(auth)/_auth"
-    },
-    "/(auth)/(lobby)/_lobby/character-select": {
-      "filePath": "(auth)/(lobby)/_lobby.character-select.tsx",
-      "parent": "/(auth)/(lobby)/_lobby"
     },
     "/(auth)/_auth/battle/$roomId": {
       "filePath": "(auth)/_auth.battle.$roomId.tsx",
