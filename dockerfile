@@ -9,10 +9,7 @@ RUN npm ci --legacy-peer-deps
 # Copy source code and build
 COPY . .
 
-# Fix Tailwind CSS issue and build with TypeScript checks skipped
-RUN npm uninstall @tailwindcss/vite && \
-    npm install -D tailwindcss postcss autoprefixer && \
-    NODE_ENV=production npm run build -- --skipTypeCheck
+RUN NODE_ENV=production npm run build
 
 # Production stage with built-in Nginx config
 FROM nginx:alpine
@@ -29,7 +26,6 @@ RUN echo 'server { \
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
-
 
 # Build stage
 # FROM node:20-alpine AS build
