@@ -22,8 +22,8 @@ import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
 import { Route as authAuthLobbyImport } from './routes/(auth)/_auth.lobby'
 import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
 import { Route as authlobbyLobbyImport } from './routes/(auth)/(lobby)/_lobby'
-import { Route as authAuthBattleRoomIdImport } from './routes/(auth)/_auth.battle.$roomId'
 import { Route as authAuthRoomRoomIdImport } from './routes/(auth)/_auth.room.$roomId'
+import { Route as authAuthBattleRoomIdImport } from './routes/(auth)/_auth.battle.$roomId'
 import { Route as authlobbyLobbyCharacterSelectImport } from './routes/(auth)/(lobby)/_lobby.character-select'
 import { Route as authlobbyLobbyWaitingRoomLobbyIdImport } from './routes/(auth)/(lobby)/_lobby.waiting-room.$lobbyId'
 
@@ -101,15 +101,15 @@ const authlobbyLobbyRoute = authlobbyLobbyImport.update({
   getParentRoute: () => authlobbyRoute,
 } as any)
 
-const authAuthBattleRoomIdRoute = authAuthBattleRoomIdImport.update({
-  id: '/battle/$roomId',
-  path: '/battle/$roomId',
-  getParentRoute: () => authAuthRoute,
-} as any)
-
 const authAuthRoomRoomIdRoute = authAuthRoomRoomIdImport.update({
   id: '/room/$roomId',
   path: '/room/$roomId',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const authAuthBattleRoomIdRoute = authAuthBattleRoomIdImport.update({
+  id: '/battle/$roomId',
+  path: '/battle/$roomId',
   getParentRoute: () => authAuthRoute,
 } as any)
 
@@ -464,8 +464,7 @@ export const routeTree = rootRoute
         "/(auth)/_auth/lobby",
         "/(auth)/_auth/rules",
         "/(auth)/_auth/",
-        "/(auth)/_auth/battle/$roomId"
-        "/(auth)/_auth/",
+        "/(auth)/_auth/battle/$roomId",
         "/(auth)/_auth/room/$roomId"
       ]
     },
