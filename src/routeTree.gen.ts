@@ -22,6 +22,7 @@ import { Route as authAuthRulesImport } from './routes/(auth)/_auth.rules'
 import { Route as authAuthLobbyImport } from './routes/(auth)/_auth.lobby'
 import { Route as authAuthCharacterPageImport } from './routes/(auth)/_auth.character-page'
 import { Route as authAuthRoomRoomIdImport } from './routes/(auth)/_auth.room.$roomId'
+import { Route as authAuthBattleRoomIdImport } from './routes/(auth)/_auth.battle.$roomId'
 
 // Create Virtual Routes
 
@@ -89,6 +90,12 @@ const authAuthCharacterPageRoute = authAuthCharacterPageImport.update({
 const authAuthRoomRoomIdRoute = authAuthRoomRoomIdImport.update({
   id: '/room/$roomId',
   path: '/room/$roomId',
+  getParentRoute: () => authAuthRoute,
+} as any)
+
+const authAuthBattleRoomIdRoute = authAuthBattleRoomIdImport.update({
+  id: '/battle/$roomId',
+  path: '/battle/$roomId',
   getParentRoute: () => authAuthRoute,
 } as any)
 
@@ -166,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthIndexImport
       parentRoute: typeof authAuthImport
     }
+    '/(auth)/_auth/battle/$roomId': {
+      id: '/(auth)/_auth/battle/$roomId'
+      path: '/battle/$roomId'
+      fullPath: '/battle/$roomId'
+      preLoaderRoute: typeof authAuthBattleRoomIdImport
+      parentRoute: typeof authAuthImport
+    }
     '/(auth)/_auth/room/$roomId': {
       id: '/(auth)/_auth/room/$roomId'
       path: '/room/$roomId'
@@ -183,6 +197,7 @@ interface authAuthRouteChildren {
   authAuthLobbyRoute: typeof authAuthLobbyRoute
   authAuthRulesRoute: typeof authAuthRulesRoute
   authAuthIndexRoute: typeof authAuthIndexRoute
+  authAuthBattleRoomIdRoute: typeof authAuthBattleRoomIdRoute
   authAuthRoomRoomIdRoute: typeof authAuthRoomRoomIdRoute
 }
 
@@ -191,6 +206,7 @@ const authAuthRouteChildren: authAuthRouteChildren = {
   authAuthLobbyRoute: authAuthLobbyRoute,
   authAuthRulesRoute: authAuthRulesRoute,
   authAuthIndexRoute: authAuthIndexRoute,
+  authAuthBattleRoomIdRoute: authAuthBattleRoomIdRoute,
   authAuthRoomRoomIdRoute: authAuthRoomRoomIdRoute,
 }
 
@@ -240,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
+  '/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/room/$roomId': typeof authAuthRoomRoomIdRoute
 }
 
@@ -250,6 +267,7 @@ export interface FileRoutesByTo {
   '/rules': typeof authAuthRulesRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
+  '/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/room/$roomId': typeof authAuthRoomRoomIdRoute
 }
 
@@ -265,6 +283,7 @@ export interface FileRoutesById {
   '/(public)/_public/login': typeof publicPublicLoginRoute
   '/(public)/_public/register': typeof publicPublicRegisterRoute
   '/(auth)/_auth/': typeof authAuthIndexRoute
+  '/(auth)/_auth/battle/$roomId': typeof authAuthBattleRoomIdRoute
   '/(auth)/_auth/room/$roomId': typeof authAuthRoomRoomIdRoute
 }
 
@@ -277,6 +296,7 @@ export interface FileRouteTypes {
     | '/rules'
     | '/login'
     | '/register'
+    | '/battle/$roomId'
     | '/room/$roomId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -286,6 +306,7 @@ export interface FileRouteTypes {
     | '/rules'
     | '/login'
     | '/register'
+    | '/battle/$roomId'
     | '/room/$roomId'
   id:
     | '__root__'
@@ -299,6 +320,7 @@ export interface FileRouteTypes {
     | '/(public)/_public/login'
     | '/(public)/_public/register'
     | '/(auth)/_auth/'
+    | '/(auth)/_auth/battle/$roomId'
     | '/(auth)/_auth/room/$roomId'
   fileRoutesById: FileRoutesById
 }
@@ -341,6 +363,7 @@ export const routeTree = rootRoute
         "/(auth)/_auth/lobby",
         "/(auth)/_auth/rules",
         "/(auth)/_auth/",
+        "/(auth)/_auth/battle/$roomId",
         "/(auth)/_auth/room/$roomId"
       ]
     },
@@ -380,6 +403,10 @@ export const routeTree = rootRoute
     },
     "/(auth)/_auth/": {
       "filePath": "(auth)/_auth.index.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/battle/$roomId": {
+      "filePath": "(auth)/_auth.battle.$roomId.tsx",
       "parent": "/(auth)/_auth"
     },
     "/(auth)/_auth/room/$roomId": {
