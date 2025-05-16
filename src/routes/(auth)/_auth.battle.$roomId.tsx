@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useRef, useState } from "react";
@@ -20,10 +20,10 @@ export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
 
 function BattleScreen() {
   // Get the roomId from the URL parameters
+  const { data: user } = useAuth();
   const { roomId } = useParams({
     from: "/(auth)/_auth/battle/$roomId",
   });
-  const { data: user } = useAuth();
   const { leaveRoom } = useLeaveRoom();
   const { sendBattleReady } = useSendBattleReady();
   const { data: roomDetails, isLoading: isRoomLoading } = useGetRoomById({
@@ -36,6 +36,7 @@ function BattleScreen() {
     defeatedCharacters: [],
     battleReady: false,
     selectedCharacter: null,
+    readyForBattle: true,
   });
   const [player2, setPlayer2] = useState<Player>({
     userId: 2,
@@ -44,6 +45,7 @@ function BattleScreen() {
     defeatedCharacters: [],
     battleReady: false,
     selectedCharacter: null,
+    readyForBattle: true,
   });
   // State to track the battle result
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
@@ -72,35 +74,31 @@ function BattleScreen() {
   }, [roomDetails, isRoomLoading]);
 
   useStompSubscription(
-    `/topic/battle/isReady${roomId}`,
+    `/topic/battle/isReady/${roomId}`,
     (message: IMessage) => {
       const data = JSON.parse(message.body);
       if (data && Array.isArray(data) && data.length === 2) {
         // Check if the data contains two players
         // Find the correct player data based on user ID
-        const playerMap = data.reduce<Record<number, any>>(
-          (map, playerData) => {
-            map[playerData.userId] = playerData;
-            return map;
-          },
-          {}
-        );
-
-        if (!playerMap[player1.userId] || !playerMap[player2.userId]) {
+        let updatedPlayer1, updatedPlayer2;
+        if (user && data[0].userId === user.id) {
+          updatedPlayer1 = data[0];
+          updatedPlayer2 = data[1];
+        } else if (user && data[1].userId === user.id) {
+          updatedPlayer1 = data[1];
+          updatedPlayer2 = data[0];
+        } else {
           toast.error("Could not match player data with current players");
           return;
         }
-
         setPlayer1((prevPlayer) => ({
           ...prevPlayer,
-          ...playerMap[player1.userId],
+          ...updatedPlayer1,
         }));
-
         setPlayer2((prevPlayer) => ({
           ...prevPlayer,
-          ...playerMap[player2.userId],
+          ...updatedPlayer2,
         }));
-
         console.log("Received battle update:", data);
       }
     }
@@ -118,6 +116,30 @@ function BattleScreen() {
     }
   );
 
+  // Effect to update carousel position when selectedCharacter changes
+  useEffect(() => {
+    if (player1.selectedCharacter) {
+      const index = player1.activeCharacters.findIndex(
+        (char) => char.character_id === player1.selectedCharacter?.character_id
+      );
+      if (index !== -1) {
+        p1CarouselRef.current?.scrollTo(index);
+      }
+    }
+  }, [player1.selectedCharacter]);
+
+  useEffect(() => {
+    if (player2.selectedCharacter) {
+      const index = player2.activeCharacters.findIndex(
+        (char) => char.character_id === player2.selectedCharacter?.character_id
+      );
+      if (index !== -1) {
+        p2CarouselRef.current?.scrollTo(index);
+      }
+    }
+  }, [player2.selectedCharacter]);
+
+
   // Effect to reset the battle when the component mounts
   // This is to ensure that the players start with the first character selected
   useEffect(() => {
@@ -132,12 +154,12 @@ function BattleScreen() {
       player1.defeatedCharacters.length === player1.activeCharacters.length &&
       player1.activeCharacters.length > 0
     ) {
-      setWinner("Player 2");
+      setWinner(player2.username);
     } else if (
       player2.defeatedCharacters.length === player2.activeCharacters.length &&
       player2.activeCharacters.length > 0
     ) {
-      setWinner("Player 1");
+      setWinner(player1.username);
     }
   }, [player1.defeatedCharacters, player2.defeatedCharacters]);
 
@@ -174,7 +196,7 @@ function BattleScreen() {
       userId: player1.userId.toString(),
       username: player1?.username,
       battleReady: true,
-      character_id: player1?.selectedCharacter?.id || null,
+      character_id: player1?.selectedCharacter?.character_id || null,
     });
   };
 
@@ -184,7 +206,7 @@ function BattleScreen() {
       userId: player2.userId.toString(),
       username: player2?.username,
       battleReady: true,
-      character_id: player2?.selectedCharacter?.id || null,
+      character_id: player2?.selectedCharacter?.character_id || null,
     });
   };
 
@@ -241,10 +263,7 @@ function BattleScreen() {
         {battleResult && (
           <div className="bg-gray-100 p-4 rounded shadow">
             <p>
-              <strong>Winner:</strong>{" "}
-              {battleResult.winner == player1.username
-                ? player1.selectedCharacter?.name
-                : player2.selectedCharacter?.name}
+              <strong>Winner:</strong> {battleResult.winningCharacter}
             </p>
             <p>
               <strong>Reason:</strong> {battleResult.reason}

@@ -5,4 +5,5 @@ export interface RoomResponse {
   id: string;
   name: string;
   players: Player[];
+  status: string;
 }

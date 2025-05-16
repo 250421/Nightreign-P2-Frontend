@@ -5,5 +5,18 @@ export interface Room {
   name: string;
   players: Player[];
   creator: Player;
-  status: "Waiting" | "Playing";
+  status: string;
+}
+
+export function formatRoomStatus(status: string): string {
+  switch (status) {
+    case "WAITING_FOR_PLAYERS":
+      return "Waiting for players";
+    case "CHOOSING_CHARACTERS":
+      return "Choosing characters";
+    case "IN_BATTLE":
+      return "In battle";
+    default:
+      return status;
+  }
 }

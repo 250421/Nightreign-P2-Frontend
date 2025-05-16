@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { useEffect, useState } from "react";
-import type { Room } from "@/features/game-room/models/room";
+import { formatRoomStatus, type Room } from "@/features/game-room/models/room";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useGetAllRooms } from "@/features/game-room/hooks/use-get-all-rooms";
 import type { RoomResponse } from "@/features/game-room/dtos/responses/room-response";
@@ -29,7 +29,7 @@ function LobbyPage() {
         id: room.id,
         name: room.name,
         players: room.players,
-        status: "Waiting",
+        status: formatRoomStatus(room.status),
         creator: room.creator.username,
       }));
 
@@ -54,7 +54,7 @@ function LobbyPage() {
               id: room.id,
               name: room.name,
               players: room.players,
-              status: "Waiting",
+              status: formatRoomStatus(room.status),
               creator: room.creator.username,
             }));
 
@@ -177,7 +177,8 @@ function LobbyPage() {
                       <h3 className="font-medium">{room.name}</h3>
                       <span
                         className={`text-xs px-2 py-1 rounded-full ${
-                          room.status === "Playing"
+                          formatRoomStatus(room.status) ===
+                          "Waiting for players"
                             ? "bg-amber-100 text-amber-800"
                             : "bg-blue-100 text-blue-800"
                         }`}
