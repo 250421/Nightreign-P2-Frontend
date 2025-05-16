@@ -1,9 +1,9 @@
 pipeline {
   agent any
 
-  // tools {
-  //   nodejs 'NodeJS 20'
-  // }
+  tools {
+    nodejs 'NodeJS 20'
+  }
 
   environment {
     DOCKER_IMAGE = 'battlesimulator-frontend'
@@ -29,10 +29,10 @@ pipeline {
     stage('Build') {
       steps {
         sh'''
-          # Skip rollup native optimizations
+          echo "optional=false" > .npmrc
           export ROLLUP_SKIP_NATIVE=true
-          # Run build
-          'npm run build --legacy-peer-deps -DskipTests'
+          // npm run build -- --legacy-peer-deps
+          npm run build
         '''
       }
     }
@@ -40,7 +40,7 @@ pipeline {
     stage('Docker Build') {
         steps {
           // Build new image
-          sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+          sh "cd ${WORKSPACE} && docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
       }
     }
 
@@ -54,7 +54,7 @@ pipeline {
                 sh """
                     docker run -d \\
                     --name ${DOCKER_IMAGE} \\
-                    -p 8082:8080 \\
+                    -p 8082:80 \\
                     --restart unless-stopped \\
                     ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """
@@ -69,6 +69,10 @@ pipeline {
     }
     failure {
         echo 'Pipeline failed. Please check the logs for more information.'
+    }
+    always {
+      // Clean up to prevent disk space issues
+      sh 'docker image prune -f || true'
     }
   }
 }
