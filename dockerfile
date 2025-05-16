@@ -7,13 +7,13 @@ RUN apk add --no-cache python3 make g++ git
 
 # Copy package files and install dependencies
 COPY package.json package-lock.json crypto-polyfill.cjs ./
-RUN npm ci --legacy-peer-deps
+RUN npm ci --include=optional --legacy-peer-deps
 
 # Copy source code and build
 COPY . .
 
 # Force install of musl native dependencies
-RUN npm rebuild lightningcss --platform=linux --arch=x64 --libc=musl
+RUN npm install --platform=linux --arch=x64 --libc=musl
 
 RUN NODE_ENV=production NODE_OPTIONS="--experimental-global-webcrypto --require ./crypto-polyfill.cjs" npm run build
 
