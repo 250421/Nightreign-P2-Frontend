@@ -5,31 +5,28 @@ pipeline {
     DOCKER_IMAGE = 'battlesimulator-frontend'
     DOCKER_TAG = "${BUILD_NUMBER}"
     PORT = '3000'
-    GITHUB_REPO = 'https://github.com/250421/Nightreign-P2-Frontend.git'
   }
 
   stages {
-    stage('Update Lock File') {
+    stage('Build with Node') {
       steps {
-        // Remove existing lock file and generate a new one
+        // Use Docker to run npm commands
         sh '''
-          # Clean up any previous build artifacts
-          rm -rf node_modules package-lock.json || true
-          
-          # Install dependencies with flags to handle architecture issues
-          npm install --no-optional --legacy-peer-deps
+          docker run --rm -v ${WORKSPACE}:/app -w /app node:20-alpine sh -c "
+            rm -rf node_modules package-lock.json || true
+            echo 'optional=false' > .npmrc
+            export ROLLUP_SKIP_NATIVE=true
+            npm install --no-optional --legacy-peer-deps
+            npm run build
+          "
         '''
       }
     }
 
-    stage('Build') {
+    stage('Docker Build') {
       steps {
-        sh'''
-          echo "optional=false" > .npmrc
-          export ROLLUP_SKIP_NATIVE=true
-          // npm run build -- --legacy-peer-deps
-          npm run build
-        '''
+        // Build new image
+        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
       }
     }
 
