@@ -42,7 +42,11 @@ pipeline {
                 sh "docker stop ${DOCKER_IMAGE} || true"
                 sh "docker rm ${DOCKER_IMAGE} || true"
                 // Run new container with environment variables
-                sh "docker run -d -p ${PORT}:80 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:latest"
+                sh """ 
+                  docker run -d --name ${DOCKER_IMAGE} -p ${PORT}:80 
+                  --restart unless-stopped \\
+                  ${DOCKER_IMAGE}:${DOCKER_TAG}
+                """
             }
         }
     }
