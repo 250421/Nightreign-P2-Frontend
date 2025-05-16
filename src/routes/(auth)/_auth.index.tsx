@@ -12,7 +12,7 @@ export const Route = createFileRoute("/(auth)/_auth/")({
   component: RouteComponent,
 });
 
-function RouteComponent() {
+export function RouteComponent() {
   return (
     <div>
       <h1 className="flex items-center justify-center gap-x-10 my-30 text-center">
@@ -49,7 +49,7 @@ function RouteComponent() {
           </CardContent>
         </Card>
       </h1>
-      <main className="flex items-center justify-center gap-x-10 my-30 text-center">
+      <h2 className="flex items-center justify-center gap-x-10 my-30 text-center">
         <Card className="w-screen">
           <CardHeader>
             <CardTitle className="text-3xl font-bold">Ready? Battle!</CardTitle>
@@ -63,7 +63,7 @@ function RouteComponent() {
             </Button>
           </CardContent>
         </Card>
-      </main>
+      </h2>
     </div>
   );
 }
