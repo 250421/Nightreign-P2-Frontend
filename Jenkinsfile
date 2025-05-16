@@ -8,7 +8,6 @@ pipeline {
   environment {
     DOCKER_IMAGE = 'battlesimulator-frontend'
     DOCKER_TAG = "${BUILD_NUMBER}"
-    PORT = '3000'
   }
 
   stages {
@@ -43,7 +42,7 @@ pipeline {
                 // sh "docker rm ${DOCKER_IMAGE} || true"
                 // Run new container with environment variables
                 sh """ 
-                  docker run -d --name ${DOCKER_IMAGE} -p ${PORT}:80 
+                  docker run -d --name ${DOCKER_IMAGE} -p 8082:3000
                   --restart unless-stopped \\
                   ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """
