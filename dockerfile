@@ -1,9 +1,15 @@
 # Build stage
-FROM node:20-alpine as build
+FROM node:20 as build
 WORKDIR /app
 
-# Install build dependencies for native modules
-RUN apk add --no-cache python3 make g++ git
+# Install build dependencies for native modules (using apt, not apk)
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # Copy package files and install dependencies
 COPY package.json package-lock.json crypto-polyfill.cjs ./

@@ -87,7 +87,8 @@
   },
     "optionalDependencies": {
     "@rollup/rollup-linux-x64-musl": "4.9.5",
-    "lightningcss-linux-x64-musl": "1.24.0"
+    "lightningcss-linux-x64-musl": "1.24.0",
+    "postcss": "^8.x"
   },
     "resolutions": {
     "vite": "^6.3.5"
