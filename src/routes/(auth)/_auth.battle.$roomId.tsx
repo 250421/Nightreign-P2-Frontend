@@ -172,11 +172,11 @@ function BattleScreen() {
   // and set the winner accordingly
   useEffect(() => {
     if (player1.defeatedCharacters.length === player1.activeCharacters.length && player1.activeCharacters.length > 0) {
-      setWinner("Player 2");
+      setWinner(player2.username);
     } else if (
       player2.defeatedCharacters.length === player2.activeCharacters.length  && player2.activeCharacters.length > 0
     ) {
-      setWinner("Player 1");
+      setWinner(player1.username);
     }
   }, [player1.defeatedCharacters, player2.defeatedCharacters]);
 
