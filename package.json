@@ -86,7 +86,8 @@
     "vite-plugin-node-polyfills": "^0.23.0"
   },
     "optionalDependencies": {
-    "@rollup/rollup-linux-x64-musl": "4.9.5"
+    "@rollup/rollup-linux-x64-musl": "4.9.5",
+    "lightningcss-linux-x64-musl": "1.24.0"
   },
     "resolutions": {
     "vite": "^6.3.5"
