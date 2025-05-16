@@ -39,8 +39,8 @@ export function PlayerCard({
           setApi={(api) => (carouselRef.current = api)}
         >
           <CarouselContent>
-            {player.activeCharacters.map((character) => (
-              <CarouselItem key={character.id}>
+            {player.activeCharacters?.map((character) => (
+              <CarouselItem key={character.character_id}>
                 <div className="p-1">
                   <img
                     src={character.characterImageUrl}
@@ -49,25 +49,25 @@ export function PlayerCard({
                   />
                 </div>
               </CarouselItem>
-            ))}
+            )) || []}
           </CarouselContent>
         </Carousel>
         <div className="flex flex-wrap gap-2">
-          {player.activeCharacters.map((character, idx) => (
+          {player.activeCharacters?.map((character, idx) => (
             <Button
               variant="outline"
               className={`w-24 transition-all ${
-                player.selectedCharacter?.id ===
-                character.id
+                player.selectedCharacter?.character_id ===
+                character.character_id
                   ? "border-blue-500 shadow-md shadow-blue-400"
                   : ""
               }`}
               disabled={
-                player.defeatedCharacters.some(
-                  (c) => c.id === character.id
+                player.defeatedCharacters?.some(
+                  (c) => c.character_id === character.character_id
                 ) || player.username !== user?.username
               }
-              key={character.id}
+              key={character.character_id}
               onClick={() => onSelect(idx)}
             >
               {character.name}
@@ -83,7 +83,7 @@ export function PlayerCard({
           <p className="text-sm text-muted-foreground">
             Defeated Characters:{" "}
             <strong>
-              {player.defeatedCharacters.map((c) => c.name).join(", ") ||
+              {player.defeatedCharacters?.map((c) => c.name).join(", ") ||
                 "None"}
             </strong>
           </p>
