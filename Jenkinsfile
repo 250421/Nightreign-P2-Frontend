@@ -32,7 +32,7 @@ pipeline {
           # Skip rollup native optimizations
           export ROLLUP_SKIP_NATIVE=true
           # Run build
-          sh 'npm run build --legacy-peer-deps -DskipTests'
+          'npm run build --legacy-peer-deps -DskipTests'
         '''
       }
     }
