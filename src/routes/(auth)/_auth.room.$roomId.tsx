@@ -21,8 +21,6 @@ export const Route = createFileRoute("/(auth)/_auth/room/$roomId")({
   component: GameRoomIdPage,
 });
 
-
-
 function GameRoomIdPage() {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const { data: user } = useAuth();
@@ -37,6 +35,23 @@ function GameRoomIdPage() {
   );
 
   const [roomDetails, setRoomDetails] = useState<Room | null>(null);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (stompClient?.connected && user) {
+        stompClient.publish({
+          destination: "/app/room/leave",
+          body: JSON.stringify({
+            roomId: roomId,
+            userId: user.id.toString(),
+          }),
+        });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [stompClient, user, roomId]);
 
   useEffect(() => {
     if (initialRoomDetails) {
@@ -73,7 +88,11 @@ function GameRoomIdPage() {
             setRoomDetails(room);
 
             // if both players are ready, navigate to battle screen
-            if (room.players.length == 2 && room.players.at(0)?.readyForBattle && room.players.at(1)?.readyForBattle) {
+            if (
+              room.players.length == 2 &&
+              room.players.at(0)?.readyForBattle &&
+              room.players.at(1)?.readyForBattle
+            ) {
               navigate({
                 to: `/battle/${roomId}`,
               });
@@ -85,7 +104,11 @@ function GameRoomIdPage() {
 
     client.activate();
     setStompClient(client);
-  }, []);
+
+    return () => {
+      client.deactivate();
+    };
+  }, [navigate, roomId, user]);
 
   const handleLeaveRoom = (request: LeaveRoomRequest) => {
     console.log("Leaving room with ID:", roomId);
@@ -103,11 +126,16 @@ function GameRoomIdPage() {
     toast.success(`Leaving room: ${request.roomId}`);
   };
 
-  const handlePlayerReady = (request: { userId: number, isReadyForBattle: boolean, team: Character[] }) => {
-
+  const handlePlayerReady = (request: {
+    userId: number;
+    isReadyForBattle: boolean;
+    team: Character[];
+  }) => {
     if (!stompClient) return;
 
-    console.log("value of request.isReadyForBattle: " + request.isReadyForBattle)
+    console.log(
+      "value of request.isReadyForBattle: " + request.isReadyForBattle
+    );
 
     stompClient.publish({
       destination: "/app/room/ready",
@@ -128,7 +156,10 @@ function GameRoomIdPage() {
             variant="outline"
             onClick={() => {
               if (user) {
-                handleLeaveRoom({ roomId: roomId, userId: user?.id.toString() });
+                handleLeaveRoom({
+                  roomId: roomId,
+                  userId: user?.id.toString(),
+                });
               }
             }}
           >
@@ -157,17 +188,22 @@ function GameRoomIdPage() {
         )}
       </div>
 
-
-      {roomDetails != null && user != null && user != undefined ?
-        <CharacterSelection {...{
-          room: roomDetails,
-          player: roomDetails.players.find((p1) => (p1.username == user.username)),
-          challenger: roomDetails.players.find((p1) => (p1.username != user.username)),
-          onPlayerReady: handlePlayerReady,
-        }
-        } />
-        :
-        <div>Error retrieving room data</div>}
+      {roomDetails != null && user != null && user != undefined ? (
+        <CharacterSelection
+          {...{
+            room: roomDetails,
+            player: roomDetails.players.find(
+              (p1) => p1.username == user.username
+            ),
+            challenger: roomDetails.players.find(
+              (p1) => p1.username != user.username
+            ),
+            onPlayerReady: handlePlayerReady,
+          }}
+        />
+      ) : (
+        <div>Error retrieving room data</div>
+      )}
     </div>
   );
 }
