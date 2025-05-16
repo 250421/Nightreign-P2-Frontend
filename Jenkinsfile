@@ -37,9 +37,6 @@ pipeline {
 
     stage('Deploy') {
         steps {
-            sh 'docker stop ${APP_NAME} || true'
-            sh 'docker rm ${APP_NAME} || true'
-            sh 'docker run -d -p ${PORT}:80 --name ${APP_NAME} ${APP_NAME}:latest'
             script {
                 // Stop existing container
                 sh "docker stop ${DOCKER_IMAGE} || true"
@@ -48,7 +45,6 @@ pipeline {
                 sh "docker run -d -p ${PORT}:80 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:latest"
             }
         }
-      }
     }
   }
 
@@ -65,3 +61,4 @@ pipeline {
     }
   }
 }
+
