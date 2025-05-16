@@ -57,7 +57,6 @@ pipeline {
         echo 'Pipeline failed. Please check the logs for more information.'
     }
     always {
-      // Clean up to prevent disk space issues
       sh 'docker image prune -f || true'
     }
   }
