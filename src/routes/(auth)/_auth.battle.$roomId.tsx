@@ -28,6 +28,23 @@ function BattleScreen() {
   });
 
   useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (stompClient?.connected && user) {
+        stompClient.publish({
+          destination: "/app/room/leave",
+          body: JSON.stringify({
+            roomId: roomId,
+            userId: user.id.toString(),
+          }),
+        });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [stompClient, user, roomId]);
+
+  useEffect(() => {
     if (roomDetails) {
       console.log("Room details:", roomDetails);
       setPlayer1({
