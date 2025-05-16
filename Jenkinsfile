@@ -1,10 +1,6 @@
 pipeline {
   agent any
 
-  tools {
-    nodejs 'NodeJS 20'
-  }
-
   environment {
     DOCKER_IMAGE = 'battlesimulator-frontend'
     DOCKER_TAG = "${BUILD_NUMBER}"
