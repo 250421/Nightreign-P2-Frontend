@@ -38,8 +38,8 @@ pipeline {
         steps {
             script {
                 // Stop existing container
-                // sh "docker stop ${DOCKER_IMAGE} || true"
-                // sh "docker rm ${DOCKER_IMAGE} || true"
+                sh "docker stop ${DOCKER_IMAGE} || true"
+                sh "docker rm ${DOCKER_IMAGE} || true"
                 // Run new container with environment variables
                 sh """ 
                   docker run -d --name ${DOCKER_IMAGE} -p 3000:80 --restart unless-stopped ${DOCKER_IMAGE}:${DOCKER_TAG}
