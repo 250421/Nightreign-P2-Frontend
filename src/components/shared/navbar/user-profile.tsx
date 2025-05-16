@@ -11,7 +11,7 @@ export const UserProfile = () => {
 
   return (
     <Avatar>
-      <AvatarFallback>{getInitials(user?.username ?? "")}</AvatarFallback>
+      <AvatarFallback>{getInitials(user?.username ?? "??")}</AvatarFallback>
     </Avatar>
   );
 };
