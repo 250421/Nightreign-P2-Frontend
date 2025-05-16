@@ -1,6 +1,7 @@
 export default {
   testEnvironment: "jsdom",
   transform: {
+    "^.+\\.[t|j]sx?$": "babel-jest",
     "^.+\\.tsx?$": "ts-jest",
   },
   moduleNameMapper: {
