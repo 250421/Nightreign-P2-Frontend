@@ -24,13 +24,6 @@ pipeline {
     }
 
     stage('Docker Build') {
-      steps {
-        // Build new image
-        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-      }
-    }
-
-    stage('Docker Build') {
         steps {
           // Build new image
           sh "cd ${WORKSPACE} && docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
