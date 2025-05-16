@@ -140,7 +140,8 @@ function BattleScreen() {
   }, [player1.selectedCharacter]);
 
   useEffect(() => {
-    if (player2.selectedCharacter) {
+    if (player2.battleReady && player1.battleReady &&player2.selectedCharacter) {
+      // Scroll to the selected character in the carousel for player 2
       const index = player2.activeCharacters.findIndex(
         (char) => char.character_id === player2.selectedCharacter?.character_id
       );
@@ -148,7 +149,7 @@ function BattleScreen() {
         p2CarouselRef.current?.scrollTo(index);
       }
     }
-  }, [player2.selectedCharacter]);
+  }, [player2.battleReady, player1.battleReady]);
 
 
   // Effect to reset the battle when the component mounts
