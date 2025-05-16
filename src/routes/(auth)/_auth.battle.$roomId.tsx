@@ -19,7 +19,7 @@ export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
 
 function BattleScreen() {
   // Get the roomId from the URL parameters
-  const {data: user } = useAuth();
+  const { data: user } = useAuth();
   const { roomId } = useParams({
     from: "/(auth)/_auth/battle/$roomId",
   });
@@ -133,7 +133,7 @@ function BattleScreen() {
   useEffect(() => {
     if (player1.selectedCharacter) {
       const index = player1.activeCharacters.findIndex(
-        char => char.character_id === player1.selectedCharacter?.character_id
+        (char) => char.character_id === player1.selectedCharacter?.character_id
       );
       if (index !== -1) {
         p1CarouselRef.current?.scrollTo(index);
@@ -144,7 +144,7 @@ function BattleScreen() {
   useEffect(() => {
     if (player2.selectedCharacter) {
       const index = player2.activeCharacters.findIndex(
-        char => char.character_id === player2.selectedCharacter?.character_id
+        (char) => char.character_id === player2.selectedCharacter?.character_id
       );
       if (index !== -1) {
         p2CarouselRef.current?.scrollTo(index);
@@ -167,14 +167,17 @@ function BattleScreen() {
     handlePlayer2Select(0);
   }, []);
 
-
   // Effect to check if either player has been defeated
   // and set the winner accordingly
   useEffect(() => {
-    if (player1.defeatedCharacters.length === player1.activeCharacters.length && player1.activeCharacters.length > 0) {
+    if (
+      player1.defeatedCharacters.length === player1.activeCharacters.length &&
+      player1.activeCharacters.length > 0
+    ) {
       setWinner(player2.username);
     } else if (
-      player2.defeatedCharacters.length === player2.activeCharacters.length  && player2.activeCharacters.length > 0
+      player2.defeatedCharacters.length === player2.activeCharacters.length &&
+      player2.activeCharacters.length > 0
     ) {
       setWinner(player1.username);
     }
@@ -297,12 +300,12 @@ function BattleScreen() {
       <Separator />
       <div className="text-center">
         <h2 className="text-2xl font-semibold">Battle Log</h2>
-        
+
         {/* {false && <p>Simulating...</p>} */}
         {battleResult && (
           <div className="bg-gray-100 p-4 rounded shadow">
             <p>
-              <strong>Winner:</strong> {battleResult.winner == player1.username ? player1.selectedCharacter?.name : player2.selectedCharacter?.name }
+              <strong>Winner:</strong> {battleResult.winningCharacter}
             </p>
             <p>
               <strong>Reason:</strong> {battleResult.reason}
