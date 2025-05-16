@@ -30,7 +30,7 @@ function LobbyPage() {
         name: room.name,
         players: room.players,
         status: formatRoomStatus(room.status),
-        creator: room.creator.username,
+        creator: room.creator,
       }));
 
       setGameRooms(rooms);
@@ -55,7 +55,7 @@ function LobbyPage() {
               name: room.name,
               players: room.players,
               status: formatRoomStatus(room.status),
-              creator: room.creator.username,
+              creator: room.creator,
             }));
 
             setGameRooms(rooms);
@@ -186,8 +186,14 @@ function LobbyPage() {
                         {room.status}
                       </span>
                     </div>
-                    <div className="mt-2 text-sm text-gray-500">
-                      Players: {room.players.length}/2
+                    <div className="mt-2 grid grid-cols-2 text-sm text-gray-500">
+                      <div>Players: {room.players.length}/2</div>
+                      <div className="text-right">
+                        Created by: {room.creator.username}
+                      </div>
+                      <div className="text-xs mt-1 text-gray-400">
+                        ID: {room.id}
+                      </div>
                     </div>
                     <div className="mt-2">
                       <Button
