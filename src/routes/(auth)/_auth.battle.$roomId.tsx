@@ -59,14 +59,25 @@ function BattleScreen() {
   useEffect(() => {
     if (roomDetails) {
       console.log("Room details:", roomDetails);
-      setPlayer1({
-        ...player1,
-        ...roomDetails.players[0],
-      });
-      setPlayer2({
-        ...player2,
-        ...roomDetails.players[1],
-      });
+      if (roomDetails.players[0].userId === user?.id) {
+        setPlayer1({
+          ...player1,
+          ...roomDetails.players[0],
+        });
+        setPlayer2({
+          ...player2,
+          ...roomDetails.players[1],
+        });
+      } else if (roomDetails.players[1].userId === user?.id) {
+        setPlayer1({
+          ...player1,
+          ...roomDetails.players[1],
+        });
+        setPlayer2({
+          ...player2,
+          ...roomDetails.players[0],
+        });
+      }
     }
     if (isRoomLoading) {
       console.log("Loading room details...");
