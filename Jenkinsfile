@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  tools {
+    nodejs 'NodeJS 20'
+  }
+
   environment {
     DOCKER_IMAGE = 'battlesimulator-frontend'
     DOCKER_TAG = "${BUILD_NUMBER}"
@@ -8,43 +12,42 @@ pipeline {
   }
 
   stages {
-    stage('Build with Node') {
+    stage('Update Lock File') {
       steps {
-        // Use Docker to run npm commands
+        // Remove existing lock file and generate a new one
         sh '''
-          docker run --rm -v ${WORKSPACE}:/app -w /app node:20-alpine sh -c "
-            rm -rf node_modules package-lock.json || true
-            echo 'optional=false' > .npmrc
-            export ROLLUP_SKIP_NATIVE=true
-            npm install --no-optional --legacy-peer-deps
-            npm run build
-          "
+            rm -f package-lock.json
+            npm cache clean --force
+            npm install --no-audit --legacy-peer-deps
         '''
       }
     }
 
+    stage('Build') {
+      steps {
+        sh 'npm run build --legacy-peer-deps'
+      }
+    }
+
     stage('Docker Build') {
-        steps {
-          // Build new image
-          sh "cd ${WORKSPACE} && docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+      steps {
+        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
       }
     }
 
     stage('Deploy') {
         steps {
+            sh 'docker stop ${APP_NAME} || true'
+            sh 'docker rm ${APP_NAME} || true'
+            sh 'docker run -d -p ${PORT}:80 --name ${APP_NAME} ${APP_NAME}:latest'
             script {
                 // Stop existing container
                 sh "docker stop ${DOCKER_IMAGE} || true"
                 sh "docker rm ${DOCKER_IMAGE} || true"
                 // Run new container with environment variables
-                sh """
-                    docker run -d \\
-                    --name ${DOCKER_IMAGE} \\
-                    -p 8082:80 \\
-                    --restart unless-stopped \\
-                    ${DOCKER_IMAGE}:${DOCKER_TAG}
-                """
+                sh "docker run -d -p ${PORT}:80 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:latest"
             }
+        }
       }
     }
   }
