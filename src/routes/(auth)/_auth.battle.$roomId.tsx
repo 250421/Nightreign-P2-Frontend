@@ -11,6 +11,7 @@ import SockJS from "sockjs-client";
 import type { IsReadyRequest } from "@/features/battle/dtos/requests/is-ready-request";
 import { useGetRoomById } from "@/features/game-room/hooks/use-get-room-by-id";
 import type { Player } from "@/features/game-room/models/player";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 
 export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
   component: BattleScreen,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
 
 function BattleScreen() {
   // Get the roomId from the URL parameters
+  const { data: user } = useAuth();
   const { roomId } = useParams({
     from: "/(auth)/_auth/battle/$roomId",
   });
@@ -61,10 +63,10 @@ function BattleScreen() {
             // Check if the data contains two players
             // Find the correct player data based on user ID
             let updatedPlayer1, updatedPlayer2;
-            if (data[0].userId === player1.userId) {
+            if (user && data[0].userId === user.id) {
               updatedPlayer1 = data[0];
               updatedPlayer2 = data[1];
-            } else if (data[1].userId === player1.userId) {
+            } else if (user && data[1].userId === user.id) {
               updatedPlayer1 = data[1];
               updatedPlayer2 = data[0];
             } else {
@@ -72,14 +74,14 @@ function BattleScreen() {
               return;
             }
 
-            if (updatedPlayer1.userId !== player1.userId) {
-              toast.error("Player 1 ID mismatch");
-              return;
-            }
-            if (updatedPlayer2.userId !== player2.userId) {
-              toast.error("Player 2 ID mismatch");
-              return;
-            }
+            // if (updatedPlayer1.userId !== user.id) {
+            //   toast.error("Player 1 ID mismatch");
+            //   return;
+            // }
+            // if (updatedPlayer2.userId !== user.id) {
+            //   toast.error("Player 2 ID mismatch");
+            //   return;
+            // }
             setPlayer1((prevPlayer) => ({
               ...prevPlayer,
               ...updatedPlayer1,
@@ -127,7 +129,28 @@ function BattleScreen() {
     readyForBattle: true,
     selectedCharacter: null,
   });
+  // Effect to update carousel position when selectedCharacter changes
+  useEffect(() => {
+    if (player1.selectedCharacter) {
+      const index = player1.activeCharacters.findIndex(
+        (char) => char.character_id === player1.selectedCharacter?.character_id
+      );
+      if (index !== -1) {
+        p1CarouselRef.current?.scrollTo(index);
+      }
+    }
+  }, [player1.selectedCharacter]);
 
+  useEffect(() => {
+    if (player2.selectedCharacter) {
+      const index = player2.activeCharacters.findIndex(
+        (char) => char.character_id === player2.selectedCharacter?.character_id
+      );
+      if (index !== -1) {
+        p2CarouselRef.current?.scrollTo(index);
+      }
+    }
+  }, [player2.selectedCharacter]);
   // State to track the battle result
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
   // State to track the winner
@@ -144,16 +167,19 @@ function BattleScreen() {
     handlePlayer2Select(0);
   }, []);
 
-
   // Effect to check if either player has been defeated
   // and set the winner accordingly
   useEffect(() => {
-    if (player1.defeatedCharacters.length === player1.activeCharacters.length && player1.activeCharacters.length > 0) {
-      setWinner("Player 2");
-    } else if (
-      player2.defeatedCharacters.length === player2.activeCharacters.length  && player2.activeCharacters.length > 0
+    if (
+      player1.defeatedCharacters.length === player1.activeCharacters.length &&
+      player1.activeCharacters.length > 0
     ) {
-      setWinner("Player 1");
+      setWinner(player2.username);
+    } else if (
+      player2.defeatedCharacters.length === player2.activeCharacters.length &&
+      player2.activeCharacters.length > 0
+    ) {
+      setWinner(player1.username);
     }
   }, [player1.defeatedCharacters, player2.defeatedCharacters]);
 
@@ -274,12 +300,12 @@ function BattleScreen() {
       <Separator />
       <div className="text-center">
         <h2 className="text-2xl font-semibold">Battle Log</h2>
-        
+
         {/* {false && <p>Simulating...</p>} */}
         {battleResult && (
           <div className="bg-gray-100 p-4 rounded shadow">
             <p>
-              <strong>Winner:</strong> {battleResult.winner == player1.username ? player1.selectedCharacter?.name : player2.selectedCharacter?.name }
+              <strong>Winner:</strong> {battleResult.winningCharacter}
             </p>
             <p>
               <strong>Reason:</strong> {battleResult.reason}
