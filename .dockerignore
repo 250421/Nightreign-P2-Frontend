@@ -1,0 +1,11 @@
+# To improve the build process
+node_modules
+npm-debug.log
+dist
+.git
+.github
+.gitignore
+.env
+.env.local
+README.md
+Jenkinsfile

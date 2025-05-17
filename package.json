@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "jest --coverage",
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node --experimental-global-webcrypto --require=./crypto-polyfill.cjs ./node_modules/vite/bin/vite.js",
+    "build": "tsc -b && node --experimental-global-webcrypto --require=./crypto-polyfill.cjs ./node_modules/vite/bin/vite.js build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -55,7 +55,7 @@
     "lucide-react": "^0.508.0",
     "next-themes": "^0.4.6",
     "react": "^19.1.0",
-    "react-day-picker": "^8.10.1",
+    "react-day-picker": "^9.0.0-beta.1",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.3",
     "react-resizable-panels": "^3.0.1",
@@ -65,7 +65,6 @@
     "sockjs-client": "^1.6.1",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
-    "tailwindcss": "^4.1.5",
     "vaul": "^1.1.2",
     "zod": "^3.24.4"
   },
@@ -74,6 +73,7 @@
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
     "@eslint/js": "^9.25.0",
+    "@tailwindcss/postcss": "^4.1.7",
     "@tanstack/router-plugin": "^1.120.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -84,19 +84,34 @@
     "@types/react-dom": "^19.1.2",
     "@types/sockjs-client": "^1.5.4",
     "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.21",
     "babel-jest": "^29.7.0",
     "babel-preset-vite": "^1.1.3",
+    "cross-env": "^7.0.3",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "node-stdlib-browser": "^1.3.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7",
     "ts-jest": "^29.3.3",
     "ts-node": "^10.9.2",
     "tw-animate-css": "^1.2.9",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
+    "vite": "^6.3.5",
+    "vite-plugin-node-polyfills": "^0.23.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-musl": "4.9.5",
+    "lightningcss-linux-x64-musl": "1.24.0",
+    "postcss": "^8.x"
+  },
+  "resolutions": {
     "vite": "^6.3.5",
     "vite-tsconfig-paths": "^5.1.4"
   }
