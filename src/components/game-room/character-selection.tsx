@@ -28,11 +28,7 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
   }
 
   const removeCharacter = (charaToDelete: Character) => {
-    updateSelectedCharacter(characterSelect?.filter(chara => chara !== charaToDelete));
-  }
-
-  const removeFirst = () => {
-    updateSelectedCharacter(characterSelect?.filter(chara => chara !== characterSelect.at(0)));
+    updateSelectedCharacter(characterSelect?.filter(chara => chara.character_id !== charaToDelete.character_id));
   }
 
   const removeCharacterAtIndex = (index: number) => {
@@ -77,16 +73,9 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
                   onClick={() => {
                     console.log(chara);
                     if (!isReady) {
-                      if (characterSelect?.includes(chara)) {
-                        // "deselect character" by removing it
+                      if (characterSelect?.some(c => c.character_id === chara.character_id)) {
                         removeCharacter(chara);
-                      }
-                      else if (characterSelect?.length == 3) {
-                        // Remove first selected and add the new one as third
-                        removeFirst();
-                        addToEnd(chara);
-                      }
-                      else {
+                      } else if ((characterSelect?.length ?? 0) < 3) {
                         addToEnd(chara);
                       }
                     }
@@ -108,37 +97,37 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
           <Card>
             <div className="flex flex-row gap-x-50 justify-center">
               <Card className={`w-50 h-50 ${isReady ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-              onClick={() => {
-                if(!isReady && characterSelect?.at(0)){
-                  removeCharacterAtIndex(0);
-                }
-              }}
+                onClick={() => {
+                  if (!isReady && characterSelect?.at(0)) {
+                    removeCharacterAtIndex(0);
+                  }
+                }}
               >
-                <img
+                <img data-testid="Select1"
                   src={characterSelect?.at(0)?.characterImageUrl || "https://placehold.co/600x400/transparent/black?text=Character+1"}
                   alt={characterSelect?.at(0)?.name || "Placeholder"}
                   className="w-full h-full object-contain"
                 />
               </Card>
               <Card className={`w-50 h-50 ${isReady ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-              onClick={() => {
-                if(!isReady && characterSelect?.at(1)){
-                  removeCharacterAtIndex(1);
-                }
-              }}>
-                <img
+                onClick={() => {
+                  if (!isReady && characterSelect?.at(1)) {
+                    removeCharacterAtIndex(1);
+                  }
+                }}>
+                <img data-testid="Select2"
                   src={characterSelect?.at(1)?.characterImageUrl || "https://placehold.co/600x400/transparent/black?text=Character+2"}
                   alt={characterSelect?.at(1)?.name || "Placeholder"}
                   className="w-full h-full object-contain"
                 />
               </Card>
               <Card className={`w-50 h-50 ${isReady ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-              onClick={() => {
-                if(!isReady && characterSelect?.at(2)){
-                  removeCharacterAtIndex(2);
-                }
-              }}>
-                <img
+                onClick={() => {
+                  if (!isReady && characterSelect?.at(2)) {
+                    removeCharacterAtIndex(2);
+                  }
+                }}>
+                <img data-testid="Select3"
                   src={characterSelect?.at(2)?.characterImageUrl || "https://placehold.co/600x400/transparent/black?text=Character+3"}
                   alt={characterSelect?.at(2)?.name || "Placeholder"}
                   className="w-full h-full object-contain"

@@ -5,7 +5,6 @@ export const UserProfile = () => {
   const { data: user } = useAuth();
 
   const getInitials = (name: string) => {
-    if (!name) return "";
     return (name[0] + name[1]).toUpperCase();
   };
 
