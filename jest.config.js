@@ -8,4 +8,5 @@ export default {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  coveragePathIgnorePatterns: ["<rootDir>/src/components/ui"],
 };
