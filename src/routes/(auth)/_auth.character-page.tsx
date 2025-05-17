@@ -17,7 +17,7 @@ export const Route = createFileRoute('/(auth)/_auth/character-page')({
   component: RouteComponent,
 })
 
-function RouteComponent() {
+export function RouteComponent() {
   const { data: characters } = useGetCharacters();
   const { data: user } = useAuth();
   const [searchInput, updateSearchInput] = useState<string>("");

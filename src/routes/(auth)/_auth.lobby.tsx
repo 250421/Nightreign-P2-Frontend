@@ -14,7 +14,7 @@ export const Route = createFileRoute("/(auth)/_auth/lobby")({
   component: LobbyPage,
 });
 
-function LobbyPage() {
+export function LobbyPage() {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const [gameRooms, setGameRooms] = useState<Room[]>([]);
   const navigate = useNavigate();
