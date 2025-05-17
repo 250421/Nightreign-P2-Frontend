@@ -16,7 +16,7 @@ export const NavbarNavigation = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                        <NavigationMenuLink href="/lobbies" className="bg-red-800">
+                        <NavigationMenuLink href="/lobby" className="bg-red-800">
                             Lobbies
                         </NavigationMenuLink>
                 </NavigationMenuItem>
