@@ -1,4 +1,8 @@
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +16,7 @@ import type { IsReadyRequest } from "@/features/battle/dtos/requests/is-ready-re
 import { useGetRoomById } from "@/features/game-room/hooks/use-get-room-by-id";
 import type { Player } from "@/features/game-room/models/player";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
   component: BattleScreen,
@@ -19,6 +24,7 @@ export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
 
 function BattleScreen() {
   // Get the roomId from the URL parameters
+  const [leaveConfirm, LeaveDialog] = useConfirm();
   const { data: user } = useAuth();
   const { roomId } = useParams({
     from: "/(auth)/_auth/battle/$roomId",
@@ -28,6 +34,8 @@ function BattleScreen() {
   const { data: roomDetails, isLoading: isRoomLoading } = useGetRoomById({
     id: roomId,
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -62,6 +70,18 @@ function BattleScreen() {
       console.log("Loading room details...");
     }
   }, [roomDetails, isRoomLoading]);
+
+  const handleLeaveLobby = async () => {
+    const ok = await leaveConfirm();
+    if (!ok) return;
+    if (!stompClient || !user?.username) return;
+    stompClient.publish({
+      destination: "/app/room/leave",
+      body: JSON.stringify({ roomId, userId: user.id.toString() }),
+    });
+
+    navigate({ to: "/lobby" });
+  };
 
   useEffect(() => {
     // Connect to WebSocket
@@ -227,32 +247,6 @@ function BattleScreen() {
     p2CarouselRef
   );
 
-  // Function to reset the battle state
-  // This is called when the "Reset Match" button is clicked
-  const resetBattle = () => {
-    setPlayer1({
-      userId: 1,
-      username: "Player 1",
-      activeCharacters: [],
-      defeatedCharacters: [],
-      battleReady: false,
-      readyForBattle: true,
-      selectedCharacter: null,
-    });
-    setPlayer2({
-      userId: 2,
-      username: "Player 2",
-      activeCharacters: [],
-      defeatedCharacters: [],
-      battleReady: false,
-      readyForBattle: true,
-      selectedCharacter: null,
-    });
-    setWinner(null);
-    handlePlayer1Select(0);
-    handlePlayer2Select(0);
-  };
-
   const handleIsReady = (request: IsReadyRequest) => {
     if (!stompClient) return;
 
@@ -264,7 +258,15 @@ function BattleScreen() {
 
   return (
     <div className="mx-auto space-y-6 p-6 max-w-5xl">
-      <h1 className="text-3xl font-bold text-center">Battle Arena</h1>
+      <div className="flex justify-between items-center mb-6 relative">
+        <div className="w-full absolute text-center">
+          <h1 className="text-3xl font-bold">Battle Arena</h1>
+        </div>
+        <div className="flex-1"></div>
+        <Button onClick={handleLeaveLobby} variant="outline" className="z-10">
+          Exit Lobby
+        </Button>
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <PlayerCard
           player={player1}
@@ -309,9 +311,6 @@ function BattleScreen() {
             {winner} Wins the Match!
           </div>
         )}
-        <Button variant="secondary" onClick={resetBattle}>
-          Reset Match
-        </Button>
       </div>
 
       <Separator />
@@ -330,6 +329,11 @@ function BattleScreen() {
           </div>
         )}
       </div>
+      <LeaveDialog
+                title={"Leaving Room"}
+                description={"Are you sure you want to leave the room?"}
+                destructive={true}
+            />
     </div>
   );
 }
