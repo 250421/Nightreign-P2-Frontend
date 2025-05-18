@@ -133,6 +133,45 @@ function BattleScreen() {
           //console.log("Received battle update:", data);
         });
 
+        client.subscribe("/topic/battle/isComplete/" + roomId, (message) => {
+          const data = JSON.parse(message.body);
+          // Process the received battle data and update player states
+          if (data && Array.isArray(data) && data.length === 2) {
+            // Check if the data contains two players
+            // Find the correct player data based on user ID
+            let updatedPlayer1, updatedPlayer2;
+            if (user && data[0].userId === user.id) {
+              updatedPlayer1 = data[0];
+              updatedPlayer2 = data[1];
+            } else if (user && data[1].userId === user.id) {
+              updatedPlayer1 = data[1];
+              updatedPlayer2 = data[0];
+            } else {
+              toast.error("Could not match player data with current players");
+              return;
+            }
+
+            // if (updatedPlayer1.userId !== user.id) {
+            //   toast.error("Player 1 ID mismatch");
+            //   return;
+            // }
+            // if (updatedPlayer2.userId !== user.id) {
+            //   toast.error("Player 2 ID mismatch");
+            //   return;
+            // }
+            setPlayer1((prevPlayer) => ({
+              ...prevPlayer,
+              ...updatedPlayer1,
+            }));
+
+            setPlayer2((prevPlayer) => ({
+              ...prevPlayer,
+              ...updatedPlayer2,
+            }));
+          }
+          //console.log("Received battle update:", data);
+        });
+
         // Subscribe to battle result updates
         client.subscribe("/topic/battle/result/" + roomId, (message) => {
           const data = JSON.parse(message.body);
