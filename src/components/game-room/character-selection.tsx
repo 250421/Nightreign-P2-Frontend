@@ -71,7 +71,7 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
                 <Card key={chara.character_id}
                   className="w-[400px] h-[200px] cursor-pointer"
                   onClick={() => {
-                    console.log(chara);
+                    //console.log(chara);
                     if (!isReady) {
                       if (characterSelect?.some(c => c.character_id === chara.character_id)) {
                         removeCharacter(chara);
@@ -144,7 +144,7 @@ export const CharacterSelection = (props: CharacterSelectionProps) => {
                     isReadyForBattle: newReady,
                     team: characterSelect,
                   });
-                  console.log(newReady);
+                  //console.log(newReady);
                 }
               }}>
                 {isReady ? "Cancel" : "Ready"}

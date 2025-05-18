@@ -44,7 +44,7 @@ export function LobbyPage() {
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("Connected to game rooms socket");
+        //("Connected to game rooms socket");
 
         stompClient.subscribe("/topic/rooms", (message) => {
           const data = JSON.parse(message.body);
@@ -102,7 +102,7 @@ export function LobbyPage() {
       "/topic/room/created",
       (message) => {
         const response = JSON.parse(message.body);
-        console.log("Room created:", response);
+        //console.log("Room created:", response);
 
         navigate({
           to: "/room/$roomId",

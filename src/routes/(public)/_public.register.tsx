@@ -39,7 +39,7 @@ function RegisterPage() {
   });
 
   const onSubmit = (data: RegisterFormValues) => {
-    console.log("Registering user:", data);
+    //console.log("Registering user:", data);
     register(data);
     // handle registration logic
   };

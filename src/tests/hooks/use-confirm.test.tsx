@@ -95,4 +95,26 @@ describe("useConfirm", () => {
         expect(onResult).toHaveBeenCalledWith(false);
         expect(screen.queryByTestId("dialog")).not.toBeInTheDocument();
     });
+
+    it("uses default labels and non-destructive variant", async () => {
+        function TestDefaultLabels({ onResult }: { onResult: (result: boolean) => void }) {
+            const [confirm, ConfirmDialog] = useConfirm();
+            return (
+                <div>
+                    <button onClick={async () => onResult(await confirm())}>Open</button>
+                    <ConfirmDialog title="T" description="D" />
+                </div>
+            );
+        }
+        const onResult = jest.fn();
+        render(<TestDefaultLabels onResult={onResult} />);
+        fireEvent.click(screen.getByText("Open"));
+        expect(screen.getByText("Confirm")).toBeInTheDocument();
+        expect(screen.getByText("Cancel")).toBeInTheDocument();
+        // Confirm
+        await act(async () => {
+            fireEvent.click(screen.getByText("Confirm"));
+        });
+        expect(onResult).toHaveBeenCalledWith(true);
+    });
 });

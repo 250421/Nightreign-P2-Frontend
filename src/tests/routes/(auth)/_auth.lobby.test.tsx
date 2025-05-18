@@ -1,5 +1,4 @@
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
-import { Route } from "@/routes/(auth)/_auth.lobby";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { LobbyPage } from "@/routes/(auth)/_auth.lobby";
 
 // Mocks
@@ -24,17 +23,19 @@ jest.mock("sonner", () => ({
 }));
 
 // Mock SockJS and StompJS
-const mockSubscribe = jest.fn(() => ({ id: "sub-id" }));
+const mockSubscribe = jest.fn();
 const mockUnsubscribe = jest.fn();
 const mockPublish = jest.fn();
 const mockDeactivate = jest.fn();
 const mockActivate = jest.fn();
+const mockOnConnect = jest.fn();
 const mockStompClient = {
     subscribe: mockSubscribe,
     unsubscribe: mockUnsubscribe,
     publish: mockPublish,
     deactivate: mockDeactivate,
     activate: mockActivate,
+    onConnect: mockOnConnect,
 };
 
 jest.mock("sockjs-client", () => {
@@ -150,4 +151,9 @@ describe("LobbyPage", () => {
     });
 
     // Websocket tests go here...
+    it("deactivates stompClient on unmount", () => {
+        const { unmount } = render(<LobbyPage />);
+        unmount();
+        expect(mockDeactivate).toHaveBeenCalled();
+    });
 });
