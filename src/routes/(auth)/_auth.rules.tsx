@@ -11,7 +11,7 @@ export const Route = createFileRoute('/(auth)/_auth/rules')({
   component: RouteComponent,
 })
 
-function RouteComponent() {
+export function RouteComponent() {
   return (
     <div className="flex flex-col items-center h-screen">
       <Card className="md:w-1/2 lg:w-1/2">

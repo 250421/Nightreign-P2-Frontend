@@ -56,7 +56,7 @@ function BattleScreen() {
 
   useEffect(() => {
     if (roomDetails) {
-      console.log("Room details:", roomDetails);
+      //console.log("Room details:", roomDetails);
       setPlayer1({
         ...player1,
         ...roomDetails.players[0],
@@ -67,7 +67,7 @@ function BattleScreen() {
       });
     }
     if (isRoomLoading) {
-      console.log("Loading room details...");
+      //console.log("Loading room details...");
     }
   }, [roomDetails, isRoomLoading]);
 
@@ -90,7 +90,7 @@ function BattleScreen() {
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("Connected to Battle socket");
+        //console.log("Connected to Battle socket");
 
         // Subscribe to lobby updates
         client.subscribe("/topic/battle/isReady/" + roomId, (message) => {
@@ -130,7 +130,7 @@ function BattleScreen() {
               selectedCharacter: null,
             }));
           }
-          console.log("Received battle update:", data);
+          //console.log("Received battle update:", data);
         });
 
         // Subscribe to battle result updates
@@ -140,7 +140,7 @@ function BattleScreen() {
           if (data && data.winner) {
             setBattleResult(data);
           }
-          console.log("Received battle result:", data);
+          //console.log("Received battle result:", data);
         });
       },
     });

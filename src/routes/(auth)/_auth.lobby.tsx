@@ -14,7 +14,7 @@ export const Route = createFileRoute("/(auth)/_auth/lobby")({
   component: LobbyPage,
 });
 
-function LobbyPage() {
+export function LobbyPage() {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const [gameRooms, setGameRooms] = useState<Room[]>([]);
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ function LobbyPage() {
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("Connected to game rooms socket");
+        //("Connected to game rooms socket");
 
         stompClient.subscribe("/topic/rooms", (message) => {
           const data = JSON.parse(message.body);
@@ -102,7 +102,7 @@ function LobbyPage() {
       "/topic/room/created",
       (message) => {
         const response = JSON.parse(message.body);
-        console.log("Room created:", response);
+        //console.log("Room created:", response);
 
         navigate({
           to: "/room/$roomId",
