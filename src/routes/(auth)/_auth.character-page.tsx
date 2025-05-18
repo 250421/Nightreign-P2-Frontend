@@ -75,7 +75,7 @@ export function RouteComponent() {
         {characters
         .slice()
         .sort((a, b) => a.name.localeCompare(b.name))
-        .filter(chara => chara.name.toLowerCase().includes(searchInput))
+        .filter(chara => chara.name.toLowerCase().includes(searchInput.toLowerCase()))
         .map((chara) => {
           return (
             <Card key={chara.character_id} className="w-[400px] h-[200px]">
