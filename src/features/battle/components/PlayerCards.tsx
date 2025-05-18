@@ -17,7 +17,7 @@ type PlayerCardProps = {
   onSelect: (index: number) => void;
   carouselRef: RefObject<CarouselApi | null>;
   onReady: () => void;
-  isSimulating: boolean;
+  turnStarted: boolean;
   disabled: boolean;
 };
 
@@ -26,7 +26,7 @@ export function PlayerCard({
   onSelect,
   carouselRef,
   onReady: onSimulate,
-  isSimulating,
+  turnStarted: turnstarted,
   disabled,
 }: PlayerCardProps) {
   const { data: user } = useAuth();
@@ -42,11 +42,19 @@ export function PlayerCard({
             {player.activeCharacters?.map((character) => (
               <CarouselItem key={character.character_id}>
                 <div className="p-1">
-                  <img
-                    src={character.characterImageUrl}
-                    alt={character.name}
-                    className="rounded-lg w-full h-48 object-contain"
-                  />
+                  {player.username !== user?.username && !turnstarted ? (
+                    <img
+                      src="/questionmark.png"
+                      alt="Hidden Character"
+                      className="rounded-lg w-full h-48 object-contain"
+                    />
+                  ) : (
+                    <img
+                      src={character.characterImageUrl}
+                      alt={character.name}
+                      className="rounded-lg w-full h-48 object-contain"
+                    />
+                  )}
                 </div>
               </CarouselItem>
             )) || []}
@@ -57,20 +65,22 @@ export function PlayerCard({
             <Button
               variant="outline"
               className={`w-24 transition-all ${
-                player.selectedCharacter?.character_id ===
-                character.character_id
-                  ? "border-blue-500 shadow-md shadow-blue-400"
-                  : ""
+              player.selectedCharacter?.character_id === character.character_id && 
+              player.username === user?.username
+              ? "border-blue-500 shadow-md shadow-blue-400"
+              : ""
               }`}
               disabled={
-                player.defeatedCharacters?.some(
-                  (c) => c.character_id === character.character_id
-                ) || player.username !== user?.username
+              player.defeatedCharacters?.some(
+              (c) => c.character_id === character.character_id
+              ) || player.username !== user?.username
               }
               key={character.character_id}
               onClick={() => onSelect(idx)}
             >
-              {character.name}
+              {player.username === user?.username || turnstarted 
+              ? character.name 
+              : "???"}
             </Button>
           ))}
         </div>
@@ -78,7 +88,13 @@ export function PlayerCard({
         <div>
           <p className="text-sm text-muted-foreground">
             Selected Character:{" "}
-            <strong>{player.selectedCharacter?.name || "None"}</strong>
+            <strong>
+              {turnstarted 
+              ? player.selectedCharacter?.name || "None"
+              : player.username === user?.username
+                ? player.selectedCharacter?.name || "None" 
+                : "???"}
+            </strong>
           </p>
           <p className="text-sm text-muted-foreground">
             Defeated Characters:{" "}
@@ -92,12 +108,14 @@ export function PlayerCard({
         <div className="flex justify-center mt-4">
           <Button
             onClick={onSimulate}
-            disabled={disabled || player.selectedCharacter === null || player.username !== user?.username}
+            disabled={
+              disabled ||
+              player.selectedCharacter === null ||
+              player.username !== user?.username
+            }
             className={`${player.battleReady ? "bg-green-600 hover:bg-green-700" : ""}`}
           >
-            {isSimulating ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : player.battleReady ? (
+            {player.battleReady ? (
               "Ready!"
             ) : (
               "Begin Battle!"

@@ -13,6 +13,7 @@ import { useLeaveRoom } from "@/hooks/use-leave-room";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useStompSubscription } from "@/hooks/use-stomp-subscriptions";
 import { useSendBattleReady } from "@/features/battle/hooks/use-battle-ready";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/(auth)/_auth/battle/$roomId")({
   component: BattleScreen,
@@ -26,6 +27,8 @@ function BattleScreen() {
   });
   const { leaveRoom } = useLeaveRoom();
   const { sendBattleReady } = useSendBattleReady();
+  const [leaveConfirm, LeaveDialog] = useConfirm();
+  
   const { data: roomDetails, isLoading: isRoomLoading } = useGetRoomById({
     id: roomId,
   });
@@ -48,7 +51,33 @@ function BattleScreen() {
     readyForBattle: true,
   });
 
-  
+  // State to track the battle result
+  const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
+  // State to track the winner
+  const [winner, setWinner] = useState<string | null>(null);
+
+  // Refs to store the carousel API for each player need useref for scrollto logic
+  const p1CarouselRef = useRef<CarouselApi | null>(null);
+  const p2CarouselRef = useRef<CarouselApi | null>(null);
+
+useEffect(() => {
+  // Only scroll to player2's selected character when both players are ready
+  if (player2.selectedCharacter && player1.battleReady && player2.battleReady) {
+    const index = player2.activeCharacters.findIndex(
+      (char) => char.character_id === player2.selectedCharacter?.character_id
+    );
+    if (index !== -1) {
+      p2CarouselRef.current?.scrollTo(index);
+    }
+  }
+}, [battleResult]);
+
+
+useEffect(() => {
+  // Only initialize player1's selection
+  handlePlayer1Select(0);
+}, []);
+
   // useEffect(() => {
   //   const handleBeforeUnload = () => {
   //     if (stompClient?.connected && user) {
@@ -66,31 +95,22 @@ function BattleScreen() {
   //   return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   // }, [stompClient, user, roomId]);
 
-  useEffect(() => {
-    if (roomDetails) {
-      console.log("Room details:", roomDetails);
-      setPlayer1({
-        ...player1,
-        ...roomDetails.players[0],
-      });
-      setPlayer2({
-        ...player2,
-        ...roomDetails.players[1],
-      });
-    }
-    if (isRoomLoading) {
-      console.log("Loading room details...");
-    }
-  }, [roomDetails, isRoomLoading]);
-
-  // State to track the battle result
-  const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
-  // State to track the winner
-  const [winner, setWinner] = useState<string | null>(null);
-
-  // Refs to store the carousel API for each player need useref for scrollto logic
-  const p1CarouselRef = useRef<CarouselApi | null>(null);
-  const p2CarouselRef = useRef<CarouselApi | null>(null);
+  // useEffect(() => {
+  //   if (roomDetails) {
+  //     console.log("Room details:", roomDetails);
+  //     setPlayer1({
+  //       ...player1,
+  //       ...roomDetails.players[0],
+  //     });
+  //     setPlayer2({
+  //       ...player2,
+  //       ...roomDetails.players[1],
+  //     });
+  //   }
+  //   if (isRoomLoading) {
+  //     console.log("Loading room details...");
+  //   }
+  // }, [roomDetails, isRoomLoading]);
 
   useEffect(() => {
     if (roomDetails) {
@@ -175,25 +195,25 @@ function BattleScreen() {
     }
   }, [player1.selectedCharacter]);
 
-  useEffect(() => {
-    if (player2.battleReady && player1.battleReady &&player2.selectedCharacter) {
-      // Scroll to the selected character in the carousel for player 2
-      const index = player2.activeCharacters.findIndex(
-        (char) => char.character_id === player2.selectedCharacter?.character_id
-      );
-      if (index !== -1) {
-        p2CarouselRef.current?.scrollTo(index);
-      }
-    }
-  }, [player2.battleReady, player1.battleReady]);
+  // useEffect(() => {
+  //   if (player2.battleReady && player1.battleReady &&player2.selectedCharacter) {
+  //     // Scroll to the selected character in the carousel for player 2
+  //     const index = player2.activeCharacters.findIndex(
+  //       (char) => char.character_id === player2.selectedCharacter?.character_id
+  //     );
+  //     if (index !== -1) {
+  //       p2CarouselRef.current?.scrollTo(index);
+  //     }
+  //   }
+  // }, [player2.battleReady, player1.battleReady]);
 
 
   // Effect to reset the battle when the component mounts
   // This is to ensure that the players start with the first character selected
-  useEffect(() => {
-    handlePlayer1Select(0);
-    handlePlayer2Select(0);
-  }, []);
+  // useEffect(() => {
+  //   handlePlayer1Select(0);
+  //   handlePlayer2Select(0);
+  // }, []);
 
   // Effect to check if either player has been defeated
   // and set the winner accordingly
@@ -258,8 +278,9 @@ function BattleScreen() {
     });
   };
 
-
-  const handleLeaveRoom = () => {
+  const handleLeaveRoom = async () => {
+    const ok = await leaveConfirm();
+    if (!ok) return;
     if (user?.id) {
       leaveRoom({ roomId, userId: user.id.toString() });
     }
@@ -278,7 +299,7 @@ function BattleScreen() {
               handleBattleReadyP1();
             }
           }}
-          isSimulating={false}
+          turnStarted={player1.battleReady && player2.battleReady}
           disabled={!!winner || false}
         />
         <PlayerCard
@@ -290,7 +311,7 @@ function BattleScreen() {
               handleBattleReadyP2();
             }
           }}
-          isSimulating={false}
+          turnStarted={player1.battleReady && player2.battleReady}
           disabled={!!winner || false}
         />
       </div>
@@ -319,6 +340,11 @@ function BattleScreen() {
           </div>
         )}
       </div>
+      <LeaveDialog
+                title={"Leaving Room"}
+                description={"Are you sure you want to leave the room?"}
+                destructive={true}
+            />
     </div>
   );
 }
