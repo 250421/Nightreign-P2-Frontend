@@ -21,7 +21,7 @@ export const Route = createFileRoute("/(auth)/_auth/room/$roomId")({
   component: GameRoomIdPage,
 });
 
-function GameRoomIdPage() {
+export function GameRoomIdPage() {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const { data: user } = useAuth();
   const navigate = useNavigate();
@@ -72,11 +72,11 @@ function GameRoomIdPage() {
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("Connected to game rooms socket");
+        //console.log("Connected to game rooms socket");
 
         client.subscribe("/topic/room/" + roomId, (message) => {
           const data = JSON.parse(message.body);
-          console.log("Received room update:", data);
+          //console.log("Received room update:", data);
           if (data) {
             const room: Room = {
               id: data.id,
@@ -111,7 +111,7 @@ function GameRoomIdPage() {
   }, [navigate, roomId, user]);
 
   const handleLeaveRoom = (request: LeaveRoomRequest) => {
-    console.log("Leaving room with ID:", roomId);
+    //console.log("Leaving room with ID:", roomId);
     if (!stompClient) return;
 
     stompClient.publish({
@@ -133,9 +133,9 @@ function GameRoomIdPage() {
   }) => {
     if (!stompClient) return;
 
-    console.log(
-      "value of request.isReadyForBattle: " + request.isReadyForBattle
-    );
+    //console.log(
+    //  "value of request.isReadyForBattle: " + request.isReadyForBattle
+    //);
 
     stompClient.publish({
       destination: "/app/room/ready",

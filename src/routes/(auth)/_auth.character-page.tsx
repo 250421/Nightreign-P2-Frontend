@@ -17,7 +17,7 @@ export const Route = createFileRoute('/(auth)/_auth/character-page')({
   component: RouteComponent,
 })
 
-function RouteComponent() {
+export function RouteComponent() {
   const { data: characters } = useGetCharacters();
   const { data: user } = useAuth();
   const [searchInput, updateSearchInput] = useState<string>("");
@@ -75,7 +75,7 @@ function RouteComponent() {
         {characters
         .slice()
         .sort((a, b) => a.name.localeCompare(b.name))
-        .filter(chara => chara.name.toLowerCase().includes(searchInput))
+        .filter(chara => chara.name.toLowerCase().includes(searchInput.toLowerCase()))
         .map((chara) => {
           return (
             <Card key={chara.character_id} className="w-[400px] h-[200px]">

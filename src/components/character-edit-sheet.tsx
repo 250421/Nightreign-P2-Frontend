@@ -40,7 +40,7 @@ export const CharacterEditSheet = (chara: Character) => {
     const { mutate: editCharacter } = useEditCharacter()
 
     function onSubmit(data: z.infer<typeof editCharacterSchema>) {
-        console.log(data);
+        //console.log(data);
         editCharacter(data);
         setOpen(false);
     }

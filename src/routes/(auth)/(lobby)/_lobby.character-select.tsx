@@ -64,7 +64,7 @@ function RouteComponent() {
             <Card key={chara.character_id}
               className="w-[400px] h-[200px] cursor-pointer"
               onClick={() => {
-                console.log(chara);
+                //console.log(chara);
                 if (characterSelect?.includes(chara)) {
                   // "deselect character" by removing it
                   removeCharacter(chara);
@@ -119,7 +119,7 @@ function RouteComponent() {
           <footer className="flex flex-row justify-center w-full">
             <Button className={`${ready ? 'bg-red-500' : 'bg-green-500'} w-1/2 self-center justify-items-center`} disabled={characterSelect?.length !== 3} onClick={() => {
             setReady(!ready);
-            console.log(ready);
+            //console.log(ready);
         }}>
               {ready ? "Cancel" : "Ready"}
             </Button>

@@ -12,7 +12,7 @@ export const useGetRoomById = ({ id }: useGetRoomByIdProps) => {
     queryKey: ["rooms", id],
     queryFn: async (): Promise<RoomResponse | null> => {
       try {
-        console.log("Fetching room with ID:", id);
+        //console.log("Fetching room with ID:", id);
         const resp = await axiosInstance.get(`/room/${id}`);
         return resp.data;
       } catch (error) {

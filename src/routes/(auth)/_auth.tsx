@@ -4,10 +4,10 @@ import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/(auth)/_auth")({
-  component: RouteComponent,
+  component: AuthPage,
 });
 
-function RouteComponent() {
+export function AuthPage() {
   const { data: user, isLoading } = useAuth();
 
   if (isLoading)
