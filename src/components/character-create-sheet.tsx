@@ -39,7 +39,7 @@ export const CharacterCreateSheet = () => {
     const { mutate: addCharacter } = useAddCharacter()
 
     function onSubmit(data: z.infer<typeof addCharacterSchema>) {
-        console.log(data);
+        //console.log(data);
         addCharacter(data);
         setOpen(false);
     }

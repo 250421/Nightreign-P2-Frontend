@@ -29,7 +29,7 @@ export const Route = createFileRoute("/(public)/_public/login")({
   component: LoginPage,
 });
 
-function LoginPage() {
+export function LoginPage() {
   const {mutate: login } = useLogin();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -40,7 +40,7 @@ function LoginPage() {
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    console.log("Logging in with:", data);
+    //console.log("Logging in with:", data);
     login(data);
     // handle login logic
   };
