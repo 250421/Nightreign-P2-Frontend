@@ -127,6 +127,7 @@ function BattleScreen() {
             setPlayer2((prevPlayer) => ({
               ...prevPlayer,
               ...updatedPlayer2,
+              selectedCharacter: null,
             }));
           }
           console.log("Received battle update:", data);
