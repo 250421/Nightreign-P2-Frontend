@@ -3,7 +3,9 @@ import { render, screen } from "@testing-library/react";
 
 describe("Auth Rules Page", () => {
     beforeEach(() => {
-        render(<RouteComponent />);
+    render(
+        <RouteComponent />
+    );
     });
 
     it("renders the HOW TO PLAY title", () => {

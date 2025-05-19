@@ -45,7 +45,7 @@ describe("useRegister", () => {
 
         expect(mockAxios.post).toHaveBeenCalledWith("/auth/sign-up", registerData);
         expect(mockToast.success).toHaveBeenCalledWith("User created");
-        expect(mockNavigate).toHaveBeenCalledWith({ to: "/register" });
+        expect(mockNavigate).toHaveBeenCalledWith({ to: "/login" });
     });
 
     it("shows error toast with message from AxiosError", async () => {

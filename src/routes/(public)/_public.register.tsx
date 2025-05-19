@@ -29,7 +29,7 @@ export const Route = createFileRoute("/(public)/_public/register")({
 });
 
 function RegisterPage() {
-    const {mutate: register } = useRegister();
+    const {mutate: register } = useRegister();  
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -45,7 +45,7 @@ function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-muted">
+    <div className="flex items-center justify-center min-h-screen bg-gray-800">
       <Card className="w-full max-w-sm p-4 shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl">Register</CardTitle>
