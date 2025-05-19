@@ -21,7 +21,12 @@ function PublicLayout() {
   }
   
   return (
-    <div className="">
+    <div>
+      <h1 className="fixed top text-5xl flex text-center justify-center w-screen bg-gray-800 my-50 text-red-800 font-bold">
+        <h2>
+          Welcome to Battle Simulator!
+        </h2>
+      </h1>
       <Outlet />
     </div>
   );

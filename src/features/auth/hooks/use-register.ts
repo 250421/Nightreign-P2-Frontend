@@ -15,7 +15,7 @@ export const useRegister = () => {
         },
         onSuccess: () => {
             toast.success("User created");
-            navigate({ to: "/register" });
+            navigate({ to: "/login" });
         },
         onError: (error) => {
             console.error(error);

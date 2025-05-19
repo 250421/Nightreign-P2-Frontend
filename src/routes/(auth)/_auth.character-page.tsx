@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useGetCharacters } from '@/hooks/use-get-characters';
 import { cn } from '@/lib/utils';
-import { createFileRoute} from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Trash } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import { useConfirm } from '@/hooks/use-confirm';
@@ -63,49 +63,52 @@ export function RouteComponent() {
         </div>
       }
       <h1>
-        <Input 
-          placeholder="Search" 
-          className='bg-gray-100' 
-          onChange={(event) => updateSearchInput(event.target.value)}/>
+        <Input
+          placeholder="Search"
+          className='bg-gray-100'
+          onChange={(event) => updateSearchInput(event.target.value)} />
       </h1>
       <div
         className={cn("grid gap-y-10 grid-cols-3 my-10")}
       >
-
-        {characters
-        .slice()
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .filter(chara => chara.name.toLowerCase().includes(searchInput.toLowerCase()))
-        .map((chara) => {
-          return (
-            <Card key={chara.character_id} className="w-[400px] h-[200px]">
-              <div className="flex justify-between">
-                <CardHeader>
-                  <CardTitle className="text-3xl font-bold text-nowrap">{chara.name}</CardTitle>
-                  <CardDescription className="text-nowrap">{chara.origin}</CardDescription>
-                  {user?.role === "ADMIN" && (
-                    <div className="flex flex-cols gap-x-2">
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDelete(chara.character_id);
-                        }}
-                      >
-                        <Trash />
-                      </Button>
-                      <CharacterEditSheet {...chara} />
-                    </div>
-                  )}
-                </CardHeader>
-                <CardContent className="w-40 h-40">
-                  <img src={chara.characterImageUrl} alt={chara.name} className="w-full h-full object-contain" />
-                </CardContent>
-              </div>
-            </Card>
-          );
-        })}
+        {!characters || characters.length == 0 ?
+          <div>No characters found</div>
+          :
+          characters
+            .slice()
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .filter(chara => chara.name.toLowerCase().includes(searchInput.toLowerCase()))
+            .map((chara) => {
+              return (
+                <Card key={chara.character_id} className="w-[400px] h-[200px]">
+                  <div className="flex justify-between">
+                    <CardHeader>
+                      <CardTitle className="text-3xl font-bold text-nowrap">{chara.name}</CardTitle>
+                      <CardDescription className="text-nowrap">{chara.origin}</CardDescription>
+                      {user?.role === "ADMIN" && (
+                        <div className="flex flex-cols gap-x-2">
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDelete(chara.character_id);
+                            }}
+                          >
+                            <Trash />
+                          </Button>
+                          <CharacterEditSheet {...chara} />
+                        </div>
+                      )}
+                    </CardHeader>
+                    <CardContent className="w-40 h-40">
+                      <img src={chara.characterImageUrl} alt={chara.name} className="w-full h-full object-contain" />
+                    </CardContent>
+                  </div>
+                </Card>
+              );
+            })
+        }
       </div>
 
       <DeletionDialog
